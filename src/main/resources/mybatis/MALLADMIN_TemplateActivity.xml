@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TemplateActivity" >
+
+  <resultMap id="TemplateActivityResultMap" type="TemplateActivity" >
+    
+    <id column="activity_id" jdbcType="BIGINT" property="activityId" />
+	<result column="activity_id" jdbcType="BIGINT" property="activityId" />
+	<result column="activity_template_id" jdbcType="BIGINT" property="activityTemplateId" />
+	<result column="head_image_url" jdbcType="LONGVARCHAR" property="headImageUrl" />
+	<result column="image_url" jdbcType="LONGVARCHAR" property="imageUrl" />
+	<result column="activity_rule" jdbcType="LONGVARCHAR" property="activityRule" />
+	<result column="goods_num" jdbcType="TINYINT" property="goodsNum" />
+    <result column="category_names" jdbcType="LONGVARCHAR" property="categoryNames" />
+    <result column="goods_ids" jdbcType="LONGVARCHAR" property="goodsIds" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		activity_id,
+		activity_template_id,
+		head_image_url,
+		image_url,
+		activity_rule,
+		goods_num,
+		category_names,
+		goods_ids
+  </sql>
+  
+  <select id="selectTemplateActivityByPrimaryKey" parameterType="java.lang.Long" resultMap="TemplateActivityResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_template_activity
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectTemplateActivity" parameterType="TemplateActivity" resultMap="TemplateActivityResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_template_activity
+    where 1=1 
+		<if test="activityId != null">
+			and activity_id = #{activityId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="activityTemplateId != null">
+			and activity_template_id = #{activityTemplateId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="headImageUrl != null">
+			and head_image_url = #{headImageUrl,jdbcType=LONGVARCHAR} 
+		</if>
+		
+		<if test="imageUrl != null">
+			and image_url = #{imageUrl,jdbcType=LONGVARCHAR} 
+		</if>
+		
+		<if test="activityRule != null">
+			and activity_rule = #{activityRule,jdbcType=LONGVARCHAR} 
+		</if>
+		
+  </select>
+  
+  
+  <delete id="deleteTemplateActivityByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_template_activity
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertTemplateActivity" parameterType="TemplateActivity">
+    insert into tb_template_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="activityTemplateId != null">
+        activity_template_id,
+      </if>
+      <if test="headImageUrl != null">
+        head_image_url,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="activityRule != null">
+        activity_rule,
+      </if>
+      <if test="goodsNum != null">
+        goods_num,
+      </if>
+      <if test="categoryNames != null">
+        category_names,
+      </if>
+      <if test="goodsIds != null">
+        goods_ids,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="activityId != null">
+        #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="activityTemplateId != null">
+        #{activityTemplateId,jdbcType=BIGINT},
+      </if>
+      <if test="headImageUrl != null">
+        #{headImageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="activityRule != null">
+        #{activityRule,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodsNum != null">
+        #{goodsNum,jdbcType=TINYINT},
+      </if>
+      <if test="categoryNames != null">
+        #{categoryNames,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodsIds != null">
+        #{goodsIds,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateTemplateActivityByPrimaryKey" parameterType="TemplateActivity">
+    
+    update tb_template_activity
+    <set>
+			<if test="activityTemplateId != null">
+				activity_template_id = #{activityTemplateId,jdbcType=BIGINT},
+			</if>
+			<if test="headImageUrl != null">
+				head_image_url = #{headImageUrl,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="imageUrl != null">
+				image_url = #{imageUrl,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="activityRule != null">
+				activity_rule = #{activityRule,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="goodsNum != null">
+				goods_num = #{goodsNum,jdbcType=TINYINT},
+			</if>
+			<if test="categoryNames != null">
+		        category_names = #{categoryNames,jdbcType=LONGVARCHAR},
+		    </if>
+		    <if test="goodsIds != null">
+		        goods_ids = #{goodsIds,jdbcType=LONGVARCHAR},
+		    </if>
+    </set>
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </update>
+  
+ 
+  
+  
+</mapper>

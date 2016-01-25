@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-kafka="http://www.springframework.org/schema/integration/kafka"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration/kafka http://www.springframework.org/schema/integration/kafka/spring-integration-kafka.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean id="producerConfig" class="kafka.producer.ProducerConfig">
+        <constructor-arg index="0">
+            <props>
+                <prop key="metadata.broker.list">${kafka.borkers}</prop>
+                <prop key="serializer.class">kafka.serializer.StringEncoder</prop>
+                <prop key="key.serializer.class">kafka.serializer.StringEncoder</prop>
+                <prop key="partitioner.class">com.imxiaomai.cb.kafka.DefaultPartitioner</prop>
+                <prop key="request.required.acks">1</prop>
+            </props>
+        </constructor-arg>
+    </bean>
+
+    <bean id="kafkaProducer" class="com.imxiaomai.cb.kafka.producer.KafkaProducerFactoryBean">
+        <property name="config" ref="producerConfig"/>
+    </bean>
+
+    <bean id="pushOrderProductor" class="com.mall.admin.aop.poductor.impl.PushRefreshBeanProductorImpl" scope="singleton">
+        <property name="mallTopic" value="topic.mall.refreshbean"/>
+        <property name="pingtaiTopic" value="topic.pingtai.refreshbean"/>
+        <property name="producer" ref="kafkaProducer"/>
+    </bean>
+    
+</beans>

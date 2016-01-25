@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="GoodsProperty" >
+  <resultMap id="BaseResultMap" type="GoodsProperty" >
+    <id column="goods_property_id" property="goodsPropertyId" jdbcType="INTEGER" />
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="property_value_id" property="propertyValueId" jdbcType="INTEGER" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    goods_property_id, bg_goods_id, property_value_id,image_url, is_del
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods_property
+    where goods_property_id = #{goodsPropertyId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByBgGoodsIdValueId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods_property
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByBgGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods_property
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_goods_property
+    where goods_property_id = #{goodsPropertyId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_goods_property
+    set is_del = 1
+    where goods_property_id = #{goodsPropertyId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="GoodsProperty" >
+    <selectKey resultType="java.lang.Integer" keyProperty="goodsPropertyId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods_property (bg_goods_id, property_value_id, 
+       image_url, is_del
+      )
+    values (#{bgGoodsId,jdbcType=INTEGER}, #{propertyValueId,jdbcType=INTEGER}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{isDel,jdbcType=TINYINT}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="GoodsProperty" >
+    <selectKey resultType="java.lang.Integer" keyProperty="goodsPropertyId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        bg_goods_id,
+      </if>
+      <if test="propertyValueId != null" >
+        property_value_id,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyValueId != null" >
+        #{propertyValueId,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="GoodsProperty" >
+    update tb_goods_property
+    <set >
+      <if test="bgGoodsId != null" >
+        bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyValueId != null" >
+        property_value_id = #{propertyValueId,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where goods_property_id = #{goodsPropertyId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="GoodsProperty" >
+    update tb_goods_property
+    set bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      property_value_id = #{propertyValueId,jdbcType=INTEGER},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where goods_property_id = #{goodsPropertyId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByBgGoodsIdValueId" parameterType="GoodsProperty" >
+    update tb_goods_property
+    set image_url = #{imageUrl,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+      	  and property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </update>
+</mapper>

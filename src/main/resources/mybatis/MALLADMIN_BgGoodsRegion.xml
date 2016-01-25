@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BgGoodsRegion" >
+  <resultMap id="BaseResultMap" type="BgGoodsRegion" >
+    <id column="bg_goods_region_id" property="bgGoodsRegionId" jdbcType="INTEGER" />
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="region_type" property="regionType" jdbcType="TINYINT" />
+    <result column="origin_price" property="originPrice" jdbcType="INTEGER" />
+    <result column="wap_price" property="wapPrice" jdbcType="INTEGER" />
+    <result column="app_price" property="appPrice" jdbcType="INTEGER" />
+    <result column="max_num" property="maxNum" jdbcType="INTEGER" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    bg_goods_region_id, bg_goods_id, region_id, region_type, origin_price, wap_price, 
+    app_price, max_num, stock, status, weight, is_del
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_goods_region
+    where bg_goods_region_id = #{bgGoodsRegionId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="getByBgGoodsIdAndRegionId" resultMap="BaseResultMap" parameterType="hashmap" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_goods_region
+    where bg_goods_id = #{bgGoodsId} 
+    	  and region_id = #{regionId}
+    	  and region_type = #{regionType}
+  </select>
+  
+  <select id="getRegionIdsByBgGoodsIdAndRegionType" resultType="java.lang.Long" parameterType="hashmap" >
+    select 
+    region_id
+    from tb_bg_goods_region
+    where bg_goods_id = #{bgGoodsId} 
+    	  and region_type = #{regionType}
+    	  and is_del = 0
+  </select>
+  
+  <select id="getByRegionIdType" resultMap="BaseResultMap" parameterType="hashmap" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_goods_region
+    where region_id = #{regionId}
+    	  and region_type = #{regionType}
+    	  and is_del = 0
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_bg_goods_region
+    where bg_goods_region_id = #{bgGoodsRegionId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_bg_goods_region
+    set is_del = 1
+    where bg_goods_region_id = #{bgGoodsRegionId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByBgGoodsId" parameterType="java.lang.Long" >
+    update tb_bg_goods_region
+    set is_del = 1
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="BgGoodsRegion" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bgGoodsRegionId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_goods_region (bg_goods_id, region_id, 
+      region_type, origin_price, wap_price, 
+      app_price, max_num, stock, 
+      status, weight, is_del
+      )
+    values (#{bgGoodsId,jdbcType=INTEGER}, #{regionId,jdbcType=INTEGER}, 
+      #{regionType,jdbcType=TINYINT}, #{originPrice,jdbcType=INTEGER}, #{wapPrice,jdbcType=INTEGER}, 
+      #{appPrice,jdbcType=INTEGER}, #{maxNum,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{weight,jdbcType=INTEGER}, #{isDel,jdbcType=TINYINT}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="BgGoodsRegion" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bgGoodsRegionId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_goods_region
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        bg_goods_id,
+      </if>
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="regionType != null" >
+        region_type,
+      </if>
+      <if test="originPrice != null" >
+        origin_price,
+      </if>
+      <if test="wapPrice != null" >
+        wap_price,
+      </if>
+      <if test="appPrice != null" >
+        app_price,
+      </if>
+      <if test="maxNum != null" >
+        max_num,
+      </if>
+      <if test="stock != null" >
+        stock,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="regionType != null" >
+        #{regionType,jdbcType=TINYINT},
+      </if>
+      <if test="originPrice != null" >
+        #{originPrice,jdbcType=INTEGER},
+      </if>
+      <if test="wapPrice != null" >
+        #{wapPrice,jdbcType=INTEGER},
+      </if>
+      <if test="appPrice != null" >
+        #{appPrice,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="BgGoodsRegion" >
+    update tb_bg_goods_region
+    <set >
+      <if test="bgGoodsId != null" >
+        bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="regionType != null" >
+        region_type = #{regionType,jdbcType=TINYINT},
+      </if>
+      <if test="originPrice != null" >
+        origin_price = #{originPrice,jdbcType=INTEGER},
+      </if>
+      <if test="wapPrice != null" >
+        wap_price = #{wapPrice,jdbcType=INTEGER},
+      </if>
+      <if test="appPrice != null" >
+        app_price = #{appPrice,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        max_num = #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where bg_goods_region_id = #{bgGoodsRegionId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="BgGoodsRegion" >
+    update tb_bg_goods_region
+    set bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      region_id = #{regionId,jdbcType=INTEGER},
+      region_type = #{regionType,jdbcType=TINYINT},
+      origin_price = #{originPrice,jdbcType=INTEGER},
+      wap_price = #{wapPrice,jdbcType=INTEGER},
+      app_price = #{appPrice,jdbcType=INTEGER},
+      max_num = #{maxNum,jdbcType=INTEGER},
+      stock = #{stock,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      weight = #{weight,jdbcType=INTEGER},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where bg_goods_region_id = #{bgGoodsRegionId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateWeightStockStatus" parameterType="java.util.Map" >
+    update tb_bg_goods_region
+    set stock = #{stock,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      weight = #{weight,jdbcType=INTEGER}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} 
+    	  and region_id = #{regionId,jdbcType=INTEGER}
+    	  and region_type = #{regionType,jdbcType=INTEGER}
+    	  and is_del = 0
+  </update>
+  
+  <update id="updateStatus" parameterType="java.util.Map" >
+    update tb_bg_goods_region
+    set status = #{status,jdbcType=TINYINT}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} 
+    	  and region_id = #{regionId,jdbcType=INTEGER}
+    	  and region_type = #{regionType,jdbcType=INTEGER}
+    	  and is_del = 0
+  </update>
+  
+  <update id="updatePrice" parameterType="java.util.Map" >
+    update tb_bg_goods_region
+    set origin_price = #{originPrice,jdbcType=INTEGER},
+        wap_price = #{wapPrice,jdbcType=INTEGER},
+        app_price = #{appPrice,jdbcType=INTEGER},
+        max_num = #{maxNum,jdbcType=INTEGER}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} 
+    	  and region_id = #{regionId,jdbcType=INTEGER}
+    	  and region_type = #{regionType,jdbcType=INTEGER}
+    	  and is_del = 0
+  </update>
+    <update id="batchUpdatePrice" parameterType="java.util.Map" >
+    update tb_bg_goods_region
+    set origin_price = #{originPrice,jdbcType=INTEGER},
+        wap_price = #{wapPrice,jdbcType=INTEGER},
+        app_price = #{appPrice,jdbcType=INTEGER},
+        max_num = #{maxNum,jdbcType=INTEGER}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} 
+  </update>
+</mapper>

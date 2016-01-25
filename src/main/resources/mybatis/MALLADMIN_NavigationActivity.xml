@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="NavigationActivity" >
+
+  <resultMap id="NavigationActivityResultMap" type="NavigationActivity" >
+    
+    <id column="nav_activity_id" jdbcType="BIGINT" property="navActivityId" />
+	<result column="nav_activity_id" jdbcType="BIGINT" property="navActivityId" />
+	<result column="nav_menu_id" jdbcType="INTEGER" property="navMenuId" />
+	<result column="activity_type" jdbcType="TINYINT" property="activityType" />
+	<result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+	<result column="activity_url" jdbcType="VARCHAR" property="activityUrl" />
+	<result column="weight" jdbcType="INTEGER" property="weight" />
+	<result column="remark" jdbcType="VARCHAR" property="remark" />
+	<result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+	<result column="open_type" jdbcType="TINYINT" property="openType" />
+	<result column="status" jdbcType="TINYINT" property="status" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	<result column="creator" jdbcType="BIGINT" property="creator" />
+	<result column="operator" jdbcType="BIGINT" property="operator" />
+	<result column="is_del" jdbcType="TINYINT" property="isDel" />
+	<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+	<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		nav_activity_id,
+		nav_menu_id,
+		activity_type,
+		activity_name,
+		activity_url,
+		weight,
+		remark,
+		image_url,
+		open_type,
+		status,
+		create_time,
+		update_time,
+		creator,
+		operator,
+		is_del,
+		begin_time,
+		end_time
+  </sql>
+  
+  <select id="selectNavigationActivityByPrimaryKey" parameterType="java.lang.Long" resultMap="NavigationActivityResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_activity
+    where nav_activity_id = #{navActivityId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectNavigationActivity" parameterType="NavigationActivity" resultMap="NavigationActivityResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_activity
+    where 1=1 
+		<if test="navActivityId != null">
+			and nav_activity_id = #{navActivityId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="navMenuId != null">
+			and nav_menu_id = #{navMenuId,jdbcType=INTEGER} 
+		</if>
+		
+		<if test="activityType != null">
+			and activity_type = #{activityType,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="activityName != null">
+			and activity_name = #{activityName,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="activityUrl != null">
+			and activity_url = #{activityUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="weight != null">
+			and weight = #{weight,jdbcType=INTEGER} 
+		</if>
+		
+		<if test="remark != null">
+			and remark = #{remark,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="imageUrl != null">
+			and image_url = #{imageUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="openType != null">
+			and open_type = #{openType,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="status != null">
+			and status = #{status,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="updateTime != null">
+			and update_time = #{updateTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="creator != null">
+			and creator = #{creator,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="operator != null">
+			and operator = #{operator,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="isDel != null">
+			and is_del = #{isDel,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="beginTime != null">
+			and begin_time = #{beginTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="endTime != null">
+			and end_time = #{endTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+  </select>
+  
+  
+  <delete id="deleteNavigationActivityByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_navigation_activity
+    where nav_activity_id = #{navActivityId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertNavigationActivity" parameterType="NavigationActivity">
+    insert into tb_navigation_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="navActivityId != null">
+        nav_activity_id,
+      </if>
+      <if test="navMenuId != null">
+        nav_menu_id,
+      </if>
+      <if test="activityType != null">
+        activity_type,
+      </if>
+      <if test="activityName != null">
+        activity_name,
+      </if>
+      <if test="activityUrl != null">
+        activity_url,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="openType != null">
+        open_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="navActivityId != null">
+        #{navActivityId,jdbcType=BIGINT},
+      </if>
+      <if test="navMenuId != null">
+        #{navMenuId,jdbcType=INTEGER},
+      </if>
+      <if test="activityType != null">
+        #{activityType,jdbcType=TINYINT},
+      </if>
+      <if test="activityName != null">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityUrl != null">
+        #{activityUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="openType != null">
+        #{openType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateNavigationActivityByPrimaryKey" parameterType="NavigationActivity">
+    
+    update tb_navigation_activity
+    <set>
+			<if test="navMenuId != null">
+				nav_menu_id = #{navMenuId,jdbcType=INTEGER},
+			</if>
+			<if test="activityType != null">
+				activity_type = #{activityType,jdbcType=TINYINT},
+			</if>
+			<if test="activityName != null">
+				activity_name = #{activityName,jdbcType=VARCHAR},
+			</if>
+			<if test="activityUrl != null">
+				activity_url = #{activityUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="imageUrl != null">
+				image_url = #{imageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="openType != null">
+				open_type = #{openType,jdbcType=TINYINT},
+			</if>
+			
+			<if test="openType == 2">
+				<if test="beginTime != null">
+				begin_time = #{beginTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="endTime != null">
+				end_time = #{endTime,jdbcType=TIMESTAMP},
+				</if>
+				status = 1,
+			</if>
+			<if test="openType == 1">
+				<if test="status != null">
+					status = #{status,jdbcType=TINYINT},
+				</if>
+				begin_time = '0000-00-00 00:00:00',
+				end_time = '0000-00-00 00:00:00',
+			</if>
+			
+			
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creator != null">
+				creator = #{creator,jdbcType=BIGINT},
+			</if>
+			<if test="operator != null">
+				operator = #{operator,jdbcType=BIGINT},
+			</if>
+			<if test="isDel != null">
+				is_del = #{isDel,jdbcType=TINYINT},
+			</if>
+			
+    </set>
+    where nav_activity_id = #{navActivityId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getPageNavigationActivityByPage" resultMap="NavigationActivityResultMap">
+		select * from tb_navigation_activity
+		where 1=1
+		
+					<if test="navMenuId != null">
+		 				and nav_menu_id = #{navMenuId,jdbcType=INTEGER}
+					</if>
+					<if test="activityType != null and activityType != '' ">
+		 				and activity_type = #{activityType,jdbcType=TINYINT}
+					</if>
+					<if test="activityName != null and activityName !=''">
+		 				and activity_name like CONCAT('%',#{activityName},'%' ) 
+					</if>
+					
+					<if test="status == 1">
+						<![CDATA[ 
+						and  (
+								(open_type = 1 and status = 1)
+						     or
+						     	(open_type = 2 and begin_time < now() and end_time > now())
+						     )
+						]]>
+					</if>
+					<if test="status == 2">
+						<![CDATA[ 
+						and (
+								(open_type = 1 and status = 0)
+						     or
+						    	(open_type = 2 and (begin_time > now() or end_time < now()))
+						)
+						]]>
+					</if>
+					
+					<if test="isDel != null">
+		 				and is_del = #{isDel,jdbcType=TINYINT}
+					</if>
+		order by update_time desc
+		
+	</select>
+ 
+  
+  
+</mapper>

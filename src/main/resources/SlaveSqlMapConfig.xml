@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties>
+        <property name="dialectClass" value="com.imxiaomai.mall.model.dialect.MySQLDialect"/>
+    </properties>
+    
+	<typeAliases>
+		<typeAlias type="com.mall.admin.vo.order.PrintInfo" alias="printInfo"/>
+		<typeAlias type="com.mall.admin.vo.order.Order" alias="Order"/>
+		<typeAlias type="com.mall.admin.vo.order.ChildOrder" alias="ChildOrder"/>
+		<typeAlias type="com.mall.admin.vo.order.ChildOrderDetail" alias="ChildOrderDetail"/>
+		<typeAlias type="com.mall.admin.vo.order.Withdraw" alias="Withdraw"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mybatis/Order.xml"/>
+		<mapper resource="mybatis/Child_Order.xml"/>
+		<mapper resource="mybatis/Child_Order_Detail.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Withdraw.xml"/>
+	</mappers>
+</configuration>

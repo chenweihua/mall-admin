@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Navigation" >
+
+  <resultMap id="NavigationResultMap" type="Navigation" >
+    
+    <id column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="navigation_name" jdbcType="VARCHAR" property="navigationName" />
+	<result column="navigation_desc" jdbcType="VARCHAR" property="navigationDesc" />
+	<result column="navigation_url" jdbcType="VARCHAR" property="navigationUrl" />
+	<result column="inside_url" jdbcType="VARCHAR" property="insideUrl" />
+	<result column="weight" jdbcType="INTEGER" property="weight" />
+	<result column="status" jdbcType="TINYINT" property="status" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		navigation_id,
+		navigation_name,
+		navigation_desc,
+		navigation_url,
+		inside_url,
+		weight,
+		status,
+		create_time,
+		update_time
+  </sql>
+  
+  <select id="selectNavigationByPrimaryKey" parameterType="java.lang.Long" resultMap="NavigationResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation
+    where navigation_id = #{navigationId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectNavigation" parameterType="Navigation" resultMap="NavigationResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation
+    where 1=1 
+		<if test="navigationId != null">
+			and navigation_id = #{navigationId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="navigationName != null">
+			and navigation_name = #{navigationName,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="navigationDesc != null">
+			and navigation_desc = #{navigationDesc,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="navigationUrl != null">
+			and navigation_url = #{navigationUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="insideUrl != null">
+			and inside_url = #{insideUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="weight != null">
+			and weight = #{weight,jdbcType=INTEGER} 
+		</if>
+		
+		<if test="status != null">
+			and status = #{status,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="updateTime != null">
+			and update_time = #{updateTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+  </select>
+  
+  
+  <delete id="deleteNavigationByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_navigation
+    where navigation_id = #{navigationId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertNavigation" parameterType="Navigation">
+    insert into tb_navigation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="navigationId != null">
+        navigation_id,
+      </if>
+      <if test="navigationName != null">
+        navigation_name,
+      </if>
+      <if test="navigationDesc != null">
+        navigation_desc,
+      </if>
+      <if test="navigationUrl != null">
+        navigation_url,
+      </if>
+      <if test="insideUrl != null">
+        inside_url,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="navigationId != null">
+        #{navigationId,jdbcType=BIGINT},
+      </if>
+      <if test="navigationName != null">
+        #{navigationName,jdbcType=VARCHAR},
+      </if>
+      <if test="navigationDesc != null">
+        #{navigationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="navigationUrl != null">
+        #{navigationUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="insideUrl != null">
+        #{insideUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateNavigationByPrimaryKey" parameterType="Navigation">
+    
+    update tb_navigation
+    <set>
+			<if test="navigationName != null">
+				navigation_name = #{navigationName,jdbcType=VARCHAR},
+			</if>
+			<if test="navigationDesc != null">
+				navigation_desc = #{navigationDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="navigationUrl != null">
+				navigation_url = #{navigationUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="insideUrl != null">
+				inside_url = #{insideUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+    </set>
+    where navigation_id = #{navigationId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getPageNavigationByPage" resultMap="NavigationResultMap">
+		select * from tb_navigation
+		where 1=1
+		
+					<if test="navigationName != null">
+		 				and navigation_name = #{navigationName,jdbcType=VARCHAR}
+					</if>
+					<if test="status != null">
+		 				and status = #{status,jdbcType=TINYINT}
+					</if>
+		
+		
+	</select>
+ 
+  
+  
+</mapper>

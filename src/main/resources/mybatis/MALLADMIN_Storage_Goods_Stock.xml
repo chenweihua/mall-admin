@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StorageGoodsStock">
+
+	<resultMap id="storageGoodsStockMap" type="storagegoodsstock">
+		<result property="wms_goods_id" column="wms_goods_id" />
+		<result property="storage_goods_id" column="storage_goods_id" />
+		<result property="storage_id" column="storage_id" />
+		<result property="stock" column="stock" />
+		<result property="storage_type" column="storage_type" />
+		<result property="creator" column="creator" />
+		<result property="is_del" column="is_del" />
+		<result property="operator" column="operator" />
+		<result property="create_time"  column="create_time" />
+		<result property="update_time" column="update_time" />
+		
+		<result property="wms_goods_name" column="wms_goods_name"/>
+		<result property="wms_goods_gbm" column="wms_goods_gbm"/>
+		<result property="shelf_life" column="shelf_life"/>
+		<result property="package_spec" column="package_spec"/>
+		<result property="unit" column="unit"/>
+		
+	</resultMap>
+
+	<select id="getByQuery" resultMap="storageGoodsStockMap">
+		select * from
+		tb_storage_goods_stock where 1=1
+		<if test="storagetype != null and '' != storagetype">
+			and storagetype = #{storagetype}
+		</if>
+		<if test="wms_goods_id != null and '' != wms_goods_id">
+			and wms_goods_id = #{wms_goods_id}
+		</if>
+		<if test="storage_id != null and '' != storage_id">
+			and storage_id = #{storage_id}
+		</if>
+	</select>
+	
+	<!-- 更新商品在仓库的状态 -->
+	<update id="updatewmsgoodsinstorgestatus" parameterType="hashmap" >
+		update tb_storage_goods_stock set is_del=#{is_del},update_time=now(),operator=#{operator} where wms_goods_id=#{wms_goods_id} and storage_id=#{storage_id}
+	</update>
+	
+	<update id = "updategoodsstock" parameterType="storagegoodsstock">
+	    update tb_storage_goods_stock set stock = #{stock},update_time=NOW() where storage_goods_id=#{storage_goods_id}
+	</update>
+	
+	<!-- 添加商品库存信息 -->
+	<insert id="insertwmsgoodsstock" parameterType="storagegoodsstock">
+		insert into tb_storage_goods_stock(wms_goods_id,storage_id,stock,storage_type,create_time,update_time,creator,is_del,operator) values (#{wms_goods_id},#{storage_id},0,#{storage_type},now(),now(),#{creator},0,#{operator})
+	</insert>
+	
+	<!-- 添加商品库存信息 -->
+	<insert id="insertWithStock" parameterType="storagegoodsstock">
+		insert into tb_storage_goods_stock(wms_goods_id,storage_id,stock,storage_type,create_time,update_time,creator,is_del,operator) values (#{wms_goods_id},#{storage_id},#{stock},#{storage_type},now(),now(),#{creator},0,#{operator})
+	</insert>
+	
+	<select id="getStorageGoodsByGoodsId" parameterType="long" resultMap="storageGoodsStockMap">
+		select * from tb_storage_goods_stock where wms_goods_id=#{wms_goods_id} and is_del = 0
+	</select>
+	<select id="getByStorageAndGoods" resultMap="storageGoodsStockMap">
+		select * from tb_storage_goods_stock
+		where wms_goods_id=#{wms_goods_id} and storage_Id=#{storage_id}
+	</select>
+	
+	<select id="getStorageGoodsStockByStorageGoodsId" parameterType="long" resultMap="storageGoodsStockMap">
+	    select * from tb_storage_goods_stock
+		where  storage_goods_id = #{storagegoodsid}
+	</select>
+	
+	<select id="getByGoodsIdAndStorageId" resultMap="storageGoodsStockMap">
+	    select * from tb_storage_goods_stock
+		where  wms_goods_id = #{wmsGoodsId} and storage_id = #{storageId}
+	</select>
+	
+	<select id="getCountByParams" resultType="java.lang.Long">
+	   select count(*)
+	   from tb_storage_goods_stock sgs 
+	   left join 
+	   tb_wms_goods wg 
+	   on sgs.wms_goods_id=wg.wms_goods_id 
+	   where sgs.is_del = 0
+	   <trim>
+	       <if test="searchStr != '' and searchStr != null">
+	       		and (wg.wms_goods_gbm like concat('%',#{searchStr},'%') or wg.wms_goods_name like  concat('%',#{searchStr},'%')   )   
+	       </if>
+	       <if test="storageId != '' and storageId != null">
+	           and sgs.storage_id = #{storageId}
+	       </if>
+	       <if test="storageType != '' and storageType != null">
+	           and sgs.storage_type = #{storageType}
+	       </if>
+	   </trim>
+	   
+	</select>
+	
+	<select id="getPageStorageGoodsStockByPage" resultMap="storageGoodsStockMap">
+	   select sgs.*,wg.wms_goods_name,wg.wms_goods_gbm,wg.shelf_life,wg.package_spec,wg.unit 
+	   from tb_storage_goods_stock sgs 
+	   left join 
+	   tb_wms_goods wg 
+	   on sgs.wms_goods_id=wg.wms_goods_id 
+	   where sgs.is_del = 0
+	   <trim>
+	       <if test="searchStr != '' and searchStr != null">
+	       		and ( wg.wms_goods_gbm = #{searchStr} or wg.wms_goods_name like concat('%',#{searchStr},'%'))    
+	       </if>
+	       <if test="storageId != '' and storageId != null">
+	           and sgs.storage_id = #{storageId}
+	       </if>
+	       <if test="storageType != '' and storageType != null">
+	           and sgs.storage_type = #{storageType}
+	       </if>
+	   </trim>
+		order by storage_goods_id desc
+	    
+	</select>
+	
+	
+	  <!-- 根据商品id和商品类型查找对应的仓库 -->
+  <select id="getStorageIdByWmsGoodsId" resultType="java.lang.Long" parameterType="hashmap">
+  	select storage_id from tb_storage_goods_stock where is_del='0' and wms_goods_id=#{wmsGoodsId}
+  	<if test="storageType != null and storageType != -1">
+  		and storage_type=#{storageType}
+  	</if>
+  </select>
+  <!-- 将某仓库下的所有商品库存修改为不可用 -->
+  <update id="setStorageStcokIsDel" parameterType="java.lang.Long">
+  	update tb_storage_goods_stock set is_del='1' where storage_id=#{storageId};
+  </update>
+  
+  
+  <select id="getCollegeIdsBybgGoodsIdWithRdc" resultType="java.lang.Long" parameterType="long">
+  		select distinct tc.college_id from tb_storage_goods_stock tg,tb_college tc where tg.is_del='0' and tg.wms_goods_id= #{value}	and tg.storage_type=0
+	and tg.storage_id = tc.rdc_storage_id;
+  </select>
+  
+   <select id="getCollegeIdsBybgGoodsIdWithLdc" resultType="java.lang.Long" parameterType="long">
+  		select distinct tc.college_id from tb_storage_goods_stock tg,tb_college tc where tg.is_del='0' and tg.wms_goods_id= #{value}	and tg.storage_type=1
+	and tg.storage_id = tc.ldc_storage_id;
+  </select>
+  
+  <select id="getCollegeIdsBybgGoodsIdWithThirddc" resultType="java.lang.Long" parameterType="long">
+  		select distinct tc.college_id
+    from tb_storage_college tc,tb_storage_goods_stock tg
+    where tg.wms_goods_id= #{value}   and tg.storage_id = tc.storage_id 
+  </select>
+
+</mapper>

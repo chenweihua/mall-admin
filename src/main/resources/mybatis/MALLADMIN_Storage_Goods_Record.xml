@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StorageGoodsRecord">
+
+	<resultMap id="storageGoodsRecordMap" type="StorageGoodsRecord">
+		<result property="id" column="storage_record_id" />
+		<result property="goodsId" column="goods_id" />
+		<result property="storageId" column="storage_id" />
+		<result property="num" column="num" />
+		<result property="price" column="price" />
+		<result property="recordtype" column="record_type_id" />
+		<result property="recordcode" column="record_code" />
+		<result property="sellerId" column="seller_id" />
+		<result property="update_time" column="update_time" />
+		<result property="record_time" column="record_time" />
+		<result property="pay_status" column="pay_status" />
+		<result property="account_money" column="account_money" />
+		<result property="account_num" column="account_num" />
+		<result property="account_price" column="account_price" />
+		<result property="apply_pay_code" column="apply_pay_code" />
+		<result property="modify_remark" column="modify_remark" />
+		<result property="operator" column="operator" />
+		<result property="creator" column="create_user"/>
+		<result property="wmsgoodsname" column="wms_goods_name"/>
+		<result property="wmsgoodsgbm" column="wms_goods_gbm"/>
+		<result property="lock_status" column="lock_status"/>
+		<result property="lock_user" column="lock_user"/>
+
+	</resultMap>
+	<select id="getByGoods">
+		select * from tb_storage_goods_record where goods_id=#{goodsId} and storage_id=#{storageId}
+	</select>
+	
+	<select id="getCountByParams" resultType="java.lang.Long">
+		select count(*) 
+		from tb_storage_goods_record sgr 
+		left join tb_wms_goods wg 
+		on sgr.goods_id = wg.wms_goods_id
+		where 1=1
+		<trim>
+		    
+		   	<if test="searchStr !='' and searchStr !=null">
+		        and (wg.wms_goods_gbm like concat('%',#{searchStr},'%') or wg.wms_goods_name like concat('%',#{searchStr},'%') or sgr.apply_pay_code like concat('%',#{searchStr},'%'))
+		    </if>
+            <if test="seller_id !=-1 and seller_id != null">
+                and sgr.seller_id = #{seller_id}
+            </if>
+            <if test="record_type_id != -1 and record_type_id != null ">
+                and sgr.record_type_id = #{record_type_id}
+            </if>
+            <if test="lock_user != '' and lock_user != null">
+                and sgr.lock_user = #{lock_user}
+            </if>
+            <if test="storage_id != '' and storage_id != null">
+                and sgr.storage_id = #{storage_id}
+            </if>
+            <if test="lock_status !=null">
+                and sgr.lock_status = #{lock_status}
+            </if>
+            <if test="pay_status != null and pay_status != -1">
+                and sgr.pay_status = #{pay_status}
+            </if>
+            <if test = "beginTime != null and beginTime != ''">
+                and sgr.record_time &gt;= #{beginTime}
+            </if>
+ 
+            <if test = "endTime != null and beginTime != ''">
+                and sgr.record_time &lt;=  #{endTime}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="getPageStorageGoodsRecordByPage" resultMap="storageGoodsRecordMap">
+		select sgr.* , wg.wms_goods_name,wg.wms_goods_gbm 
+		from tb_storage_goods_record sgr 
+		left join tb_wms_goods wg 
+		on sgr.goods_id = wg.wms_goods_id
+		where 1=1
+		<trim>
+		    <if test="searchStr !='' and searchStr !=null">
+		        and (wg.wms_goods_gbm like concat('%',#{searchStr},'%') or wg.wms_goods_name like concat('%',#{searchStr},'%') or sgr.apply_pay_code like concat('%',#{searchStr},'%'))
+		    </if>
+            <if test="seller_id !=-1 and seller_id != null">
+                and sgr.seller_id = #{seller_id}
+            </if>
+            <if test="record_type_id != -1 and record_type_id != null ">
+                and sgr.record_type_id = #{record_type_id}
+            </if>
+            <if test="lock_user != '' and lock_user != null">
+                and sgr.lock_user = #{lock_user}
+            </if>
+            <if test="storage_id != '' and storage_id != null">
+                and sgr.storage_id = #{storage_id}
+            </if>
+            <if test="lock_status !=null">
+                and sgr.lock_status = #{lock_status}
+            </if>
+            <if test="pay_status != null and pay_status !=-1 ">
+                and sgr.pay_status = #{pay_status}
+            </if>
+                        <if test = "beginTime != null and beginTime != ''">
+                and sgr.record_time &gt;= #{beginTime}
+            </if>
+            <if test = "endTime != null and beginTime != ''">
+                and sgr.record_time &lt;= #{endTime}
+            </if>
+        </trim>
+        order by sgr.storage_record_id desc
+	</select>
+	
+	<select id="queryById" resultMap="storageGoodsRecordMap">
+	    select * from tb_storage_goods_record where storage_record_id = #{storageGoodsRecordId}
+	</select>
+	
+	<!-- 添加 -->
+	<insert id="insertRecord" parameterType="StorageGoodsRecord">
+		insert into tb_storage_goods_record(goods_id,storage_id,seller_id,num,record_type_id,record_code,record_time,update_time,operator,price,create_user) values (#{goodsId},#{storageId},#{sellerId},#{num},#{recordtype},#{recordcode},now(),now(),#{operator},#{price},#{creator})
+	</insert>
+
+	<update id="updateRecord" parameterType="StorageGoodsRecord">
+		update tb_storage_goods_record set num=#{num} ,price = #{price},seller_id = #{sellerId} where storage_record_id=#{id}
+	</update>
+	
+	<update id="unlockRecord" parameterType="hashMap" >
+	    update tb_storage_goods_record set lock_status=0,lock_user=0  where lock_user=#{userId} and storage_record_id=#{storageGoodsRecordId} and lock_status=1  and pay_status=0
+	</update>
+	
+	<update id="lockRecord" parameterType="hashMap" >
+		update tb_storage_goods_record set lock_status=1,lock_user=#{userId} where storage_record_id=#{storageGoodsRecordId} and (lock_status='0' or lock_status is null)  and pay_status=0
+	</update>
+	
+	<update id="setRecordPayingStatus" parameterType="hashMap" >
+	    update tb_storage_goods_record set pay_status='1',apply_pay_code=#{applypaycode},account_num=num,account_price=price,
+		account_money=num*price  where lock_user=#{userId} and pay_status=0 and lock_status=1 and storage_id=#{storageId}
+	</update>
+
+	
+	<select id="getStorageGoodsRecordsByApplyPayCode" resultMap="storageGoodsRecordMap" parameterType="hashMap">
+		select * 
+		from tb_storage_goods_record 
+		where apply_pay_code = #{applyPayCode}
+        order by update_time desc
+	</select>
+	<update id="updateAccountMoney" parameterType="hashMap">
+		update tb_storage_goods_record set 
+		 `account_money`=#{accountMoney},`modify_remark`=#{modifyRemark}  where `storage_record_id`=#{id} and pay_status='1' and lock_status='1' 
+	</update>
+	
+	<update id="updateRecordPayedStatus" parameterType="hashMap">
+		update tb_storage_goods_record set 
+		 `pay_status`=2  where `apply_pay_code`=#{applyPayCode}
+	</update>
+	
+</mapper>

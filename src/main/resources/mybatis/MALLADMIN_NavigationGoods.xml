@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="NavigationGoods" >
+
+  <resultMap id="NavigationGoodsResultMap" type="NavigationGoods" >
+	  	<result column="nav_goods_id" jdbcType="BIGINT" property="navGoodsId"/>
+		<result column="nav_goods_name" jdbcType="VARCHAR" property="navGoodsName"/>
+		<result column="nav_menu_id" jdbcType="BIGINT" property="navMenuId"/>
+		<result column="goods_id" jdbcType="VARCHAR" property="goodsId"/>
+		<result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+		<result column="goods_desc" jdbcType="VARCHAR" property="goodsDesc"/>
+		<result column="remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="reserve_price" jdbcType="INTEGER" property="reservePrice"/>
+		<result column="zk_final_price" jdbcType="INTEGER" property="zkFinalPrice"/>
+		<result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+		<result column="item_url" jdbcType="VARCHAR" property="itemUrl"/>
+		<result column="click_url" jdbcType="VARCHAR" property="clickUrl"/>
+		<result column="weight" jdbcType="INTEGER" property="weight"/>
+		<result column="is_del" jdbcType="INTEGER" property="isDel"/>
+		<result column="origin_place" jdbcType="VARCHAR" property="originPlace"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="creator" jdbcType="BIGINT" property="creator"/>
+		<result column="operator" jdbcType="BIGINT" property="operator"/>
+		<result column="goods_status" jdbcType="INTEGER" property="goodsStatus"/>
+		<result column="is_open" jdbcType="INTEGER" property="isOpen"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		nav_goods_id,
+		nav_goods_name,
+		nav_menu_id,
+		goods_id,
+		goods_name,
+		goods_desc,
+		remark,
+		reserve_price,
+		zk_final_price,
+		image_url,
+		item_url,
+		click_url,
+		weight,
+		is_del,
+		origin_place,
+		create_time,
+		update_time,
+		creator,
+		operator,
+		goods_status,
+		is_open
+  </sql>
+  
+   <select id="selectNavGoodsByPage" parameterType="map" resultMap="NavigationGoodsResultMap">
+    select ng.*
+    from tb_navigation_goods ng,tb_navigation_menu nm,tb_navigation n
+    where ng.`is_del`='0' and nm.is_del=0 and ng.nav_menu_id = nm.nav_menu_id and nm.navigation_id=n.navigation_id and n.is_del=0
+    and ng.goods_status=#{goodsStatus}
+    <if test="navGoodsName!=null">
+    and ng.nav_goods_name like concat("%",#{navGoodsName},"%")
+    </if>
+    <if test="navMenuId!=null">
+    and ng.nav_menu_id=#{navMenuId}
+    </if>
+    <if test="isOpen!=null">
+    and ng.is_open=#{isOpen}
+    </if>
+    order by ng.nav_goods_id desc;
+  </select>
+  
+  <insert id="insertNavigationGoods" parameterType="NavigationGoods">
+    insert into tb_navigation_goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="navGoodsName != null">
+        nav_goods_name,
+      </if>
+      <if test="navMenuId != null">
+        nav_menu_id,
+      </if>
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="goodsName != null">
+        goods_name,
+      </if>
+      <if test="goodsDesc != null">
+        goods_desc,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="reservePrice != null">
+        reserve_price,
+      </if>
+      <if test="zkFinalPrice != null">
+        zk_final_price,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="itemUrl != null">
+        item_url,
+      </if>
+      <if test="clickUrl != null">
+        click_url,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+        is_del,
+      <if test="originPlace != null">
+        origin_place,
+      </if>
+        create_time,
+        update_time,
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+        goods_status,
+        is_open,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		  <if test="navGoodsName != null">
+	        #{navGoodsName},
+	      </if>
+	      <if test="navMenuId != null">
+	        #{navMenuId},
+	      </if>
+	      <if test="goodsId != null">
+	        #{goodsId},
+	      </if>
+	      <if test="goodsName != null">
+	        #{goodsName},
+	      </if>
+	      <if test="goodsDesc != null">
+	        #{goodsDesc},
+	      </if>
+	      <if test="remark != null">
+	        #{remark},
+	      </if>
+	      <if test="reservePrice != null">
+	        #{reservePrice},
+	      </if>
+	      <if test="zkFinalPrice != null">
+	        #{zkFinalPrice},
+	      </if>
+	      <if test="imageUrl != null">
+	        #{imageUrl},
+	      </if>
+	      <if test="itemUrl != null">
+	        #{itemUrl},
+	      </if>
+	      <if test="clickUrl != null">
+	        #{clickUrl},
+	      </if>
+	      <if test="weight != null">
+	        #{weight},
+	      </if>
+	        0,
+	      <if test="originPlace != null">
+	        #{originPlace},
+	      </if>
+	        now(),
+	        now(),
+	      <if test="creator != null">
+	        #{creator},
+	      </if>
+	      <if test="operator != null">
+	        #{operator},
+	      </if>
+	        '1',
+	        '1',
+    </trim>
+  </insert>
+  
+  <update id="updateNavigationGoods" parameterType="NavigationGoods">
+    update tb_navigation_goods
+    <set>
+			  <if test="navGoodsName != null">
+		        nav_goods_name=#{navGoodsName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="navMenuId != null">
+		        nav_menu_id=#{navMenuId,jdbcType=BIGINT},
+		      </if>
+		      <if test="goodsId != null">
+		        goods_id=#{goodsId,jdbcType=VARCHAR},
+		      </if>
+		      <if test="goodsName != null">
+		        goods_name=#{goodsName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="goodsDesc != null">
+		        goods_desc=#{goodsDesc,jdbcType=VARCHAR},
+		      </if>
+		      <if test="remark != null">
+		        remark=#{remark,jdbcType=VARCHAR},
+		      </if>
+		      <if test="reservePrice != null">
+		        reserve_price=#{reservePrice,jdbcType=INTEGER},
+		      </if>
+		      <if test="zkFinalPrice != null">
+		        zk_final_price=#{zkFinalPrice,jdbcType=INTEGER},
+		      </if>
+		      <if test="imageUrl != null">
+		        image_url=#{imageUrl,jdbcType=VARCHAR},
+		      </if>
+		      <if test="itemUrl != null">
+		        item_url=#{itemUrl,jdbcType=VARCHAR},
+		      </if>
+		      <if test="clickUrl != null">
+		        click_url=#{clickUrl,jdbcType=VARCHAR},
+		      </if>
+		      <if test="weight != null">
+		        weight=#{weight,jdbcType=INTEGER},
+		      </if>
+		      <if test="originPlace != null">
+		        origin_place=#{originPlace,jdbcType=VARCHAR},
+		      </if>
+		        update_time=now(),
+		      <if test="operator != null">
+		        operator=#{operator,jdbcType=BIGINT},
+		      </if>
+    </set>
+    where nav_goods_id = #{navGoodsId,jdbcType=BIGINT}
+  </update>
+	<!-- 删除商品，不用区分商品是在售卖中还是在选品中 -->  
+  <update id="delNavigationGoodsById" parameterType="java.lang.Long">
+    update tb_navigation_goods set is_del='1'
+    where nav_goods_id = #{navGoodsId,jdbcType=BIGINT}
+  </update>
+  <!-- 修改商品的开启状态 -->
+  <update id="setOpenStatusById" parameterType="map">
+  	update tb_navigation_goods set is_open=#{isOpen}
+  	where nav_goods_id=#{navGoodsId,jdbcType=BIGINT} and goods_status='2'
+  </update>
+  
+  <update id="putNavGoodsToSalePool" parameterType="java.lang.Long">
+  	update tb_navigation_goods set goods_status='2'
+  	where nav_goods_id=#{navGoodsId,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 修改商品从选品池到售卖池 -->
+   <update id="putNavGoodsToSelectPool" parameterType="java.lang.Long">
+  	update tb_navigation_goods set goods_status='1'
+  	where nav_goods_id=#{navGoodsId,jdbcType=BIGINT}
+  </update>
+  
+    <!-- 根据类目id获得商品的列表 -->
+   <select id="queryGoodsByMenuId" parameterType="java.lang.Long" resultMap="NavigationGoodsResultMap">
+  	select * from tb_navigation_goods where nav_menu_id=#{navMenuId} and is_del=0;
+  </select>
+  <!-- 删除类目时，删除该类目下所有的商品 -->
+  <update id="deleteGoodsByMenuId" parameterType="java.lang.Long">
+  	update tb_navigation_goods set is_del=1 where nav_menu_id=#{navMenuId};
+  </update>
+  
+</mapper>

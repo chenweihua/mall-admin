@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BgGoodsForActivity">
+
+	<!-- 仓库中销售的商品信息 -->
+	<resultMap id="bgGoodsForActivityMap" type="bgGoodsForActivity">
+		<result property="activityBgGoodsId" column="activity_bg_goods_id" />
+		<result property="activityId" column="activity_id" />
+		<result property="bgGoodsId" column="bg_goods_id" />
+		<result property="bgGoodsName" column="bg_goods_name" />
+		<result property="bgGoodsSubname" column="bg_goods_subname" />
+		<result property="description" column="descibe" />
+		<result property="remark" column="remark" />
+		<result property="unit" column="unit" />
+		<result property="imageUrl" column="image_url" />
+		<result property="maxNum" column="max_num" />
+		<result property="weight" column="weight" />
+		<result property="goodsType" column="goods_type" />
+		<result property="goodsStatus" column="goods_status" />
+		<result property="beginTime" column="begin_time" />
+		<result property="endTime" column="end_time" />
+		<result property="showTime" column="show_time" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="operator" column="operator" />
+		<result property="isDel" column="is_del" />
+		<result property="isSeckill" column="is_seckill" />
+		<result property="storageType" column="distribute_type" />
+		
+		<result column="package_spec" property="packageSpec" jdbcType="VARCHAR" />
+  	    <result column="brand" property="brand" jdbcType="VARCHAR" />
+        <result column="shelf_life" property="shelfLife" jdbcType="VARCHAR" />
+		<result property="saleSpec" column="sale_spec" />
+		<result property="originPlace" column="origin_place" />
+		<result property="storageId" column="storage_id" />
+	</resultMap>
+
+	<insert id="insertBgGoodsForActivity" parameterType="bgGoodsForActivity"
+		useGeneratedKeys="true" keyProperty="activityBgGoodsId">
+		insert into
+		tb_activity_bg_goods(`activity_id`,`bg_goods_id`,`create_time`,`update_time`,`is_del`,`bg_goods_name`,`bg_goods_subname`,`descibe`,`remark`,`unit`,`image_url`,`max_num`,
+		`weight`,`goods_type`,`goods_status`,`begin_time`,`end_time`,`show_time`,`operator`,`is_seckill`,`distribute_type`,`package_spec`,`brand`,`shelf_life`,`sale_spec`,`origin_place`,`storage_id`)
+		values(#{activityId},#{bgGoodsId},now(),now(),'0',#{bgGoodsName},#{bgGoodsSubname},#{description},#{remark},#{unit},#{imageUrl},#{maxNum},
+		#{weight},#{goodsType},#{goodsStatus},#{beginTime},#{endTime},#{showTime},#{operator},#{isSeckill},#{storageType},#{packageSpec},#{brand},#{shelfLife},#{saleSpec},#{originPlace},#{storageId});
+	</insert>
+
+	<update id="updateBgGoodsForActivity" parameterType="bgGoodsForActivity">
+		update
+		tb_activity_bg_goods set
+		activity_id=#{activityId},bg_goods_name=#{bgGoodsName},bg_goods_subname=#{bgGoodsSubname},descibe=#{decription},remark=#{remark},unit=#{unit},
+		image_url=#{imageUrl},max_num=#{maxNum},weight=#{weight},begin_time=#{beginTime},end_time=#{endTime},show_time=#{showTime},operator=#{operator},
+		is_del=#{isDel},update_time=#{updateTime},goods_status=#{goodsStatus}
+		where activity_bg_goods_id=#{activityGgGoodsId}
+	</update>
+
+	<select id="selectBgGoodsForActivity" parameterType="hashmap"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods where 1=1
+		<if test="goodsName!=null">
+			and bg_goods_name like CONCAT('%',#{goodsName},'%' )
+		</if>
+		<if test="activityIds!=null">
+			activity_id in
+			<foreach collection="activityIds" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	<!-- 根据活动id，商品id和商品类型，查询商品是否存在 -->
+	<select id="selectByActivityIdAndGoodsId" parameterType="hashmap"
+		resultMap="bgGoodsForActivityMap">
+		SELECT
+			*
+		FROM
+			tb_activity_bg_goods
+		WHERE
+			activity_id =#{activityId}
+		AND bg_goods_id =#{bgGoodsId}
+		AND distribute_type=#{storageType}
+	</select>
+	<!-- 根据条件查询活动商品 -->
+	<select id="selectBgGoodsByQueryByPage" parameterType="hashmap"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods  where is_seckill=#{isSeckill} 
+		<if test="beginDate!=null and endDate!=null">
+		 and begin_time BETWEEN #{beginDate} AND #{endDate}
+		 </if>
+		<if test="goodsName!=null">
+			and bg_goods_name like CONCAT('%',#{goodsName},'%' )
+		</if>
+		<if test="goodsStatus!=null and goodsStatus!=0">
+			and goods_status=#{goodsStatus}
+		</if>
+		<if test="activityId!=null">
+			and activity_id =#{activityId}
+		</if>
+		and is_del='0'
+		order by activity_bg_goods_id
+	</select>
+	
+	<update id="updateBaseDate" parameterType="hashmap">
+		update
+		tb_activity_bg_goods set
+		max_num=#{maxNum},weight=#{weight},goods_status=#{status}
+		where activity_bg_goods_id=#{activityBgGoodsId}
+	</update>
+	
+	<update id="updateGoodsStatus" parameterType="hashmap">
+		update
+		tb_activity_bg_goods 
+		set goods_status=#{goodsStatus},
+			update_time=NOW()
+		where activity_bg_goods_id=#{activityBgGoodsId}
+	</update>
+	
+	<update id="updateTime" parameterType="hashmap">
+		update
+		tb_activity_bg_goods set
+		begin_time=#{beginTime},end_time=#{endTime},show_time=#{showTime}
+		where activity_bg_goods_id=#{activityBgGoodsId}
+	</update>
+	
+	<update id="deleteBgGoodsForActivity" parameterType="hashmap">
+		update
+		tb_activity_bg_goods set
+		is_del=#{isDel}
+		where activity_bg_goods_id=#{activityBgGoodsId}
+	</update>
+	
+	
+	<select id="selectOneById" parameterType="java.lang.Long"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods where activity_bg_goods_id=#{activityBgGoodsId}
+	</select>
+	
+	<select id="selectListByActivityId" parameterType="java.lang.Long"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods where activity_id=#{activityId}
+	</select>
+	
+	<select id="selectListByActivityIdAndIsDel" parameterType="hashmap"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods where activity_id=#{activityId} and is_del = #{isDel}
+	</select>
+	
+	<select id="selectByActivityGoodsId" parameterType="java.lang.Long" resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods where activity_bg_goods_id=#{activityBgGoodsId}
+	</select>
+	
+	<select id="selectThirdBgGoodsByPage" parameterType="hashmap"
+		resultMap="bgGoodsForActivityMap">
+		SELECT * FROM tb_activity_bg_goods  
+		where is_del='0' 
+		<if test="bgGoodsStatus != null ">
+			and goods_status = #{bgGoodsStatus}
+		</if>
+		<!-- <if test="categoryId != null ">
+			and bg.category_id = #{categoryId}
+		</if> -->
+		<if test="storageId != null ">
+			and storage_id = #{storageId}
+		</if>
+		<if test="storageIdList != null ">
+			and storage_id in
+			<foreach collection="storageIdList" open="(" separator="," close=")" item="storageId">
+				#{storageId, jdbcType=NUMERIC}  
+			</foreach>
+		</if>
+		<if test="bgGoodsName !='' and bgGoodsName != null">
+			and `bg_goods_name` like CONCAT('%',#{bgGoodsName},'%')
+		</if>
+		order by activity_bg_goods_id desc
+	</select>
+</mapper>

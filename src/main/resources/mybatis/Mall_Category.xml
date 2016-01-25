@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Category">
+
+	<resultMap id="categoryMap" type="category">
+		<result property="categoryId" column="category_id" />
+		<result property="categoryName" column="category_name" />
+		<result property="description" column="description" />
+		<result property="labelType" column="label_type" />
+		<result property="iconOn" column="icon_on" />
+		<result property="iconOff" column="icon_off" />
+		<result property="appIcon" column="app_icon" />
+		<result property="weight" column="weight" />
+		<result property="showIndex" column="show_index" />
+		<result property="indexWeight" column="index_weight" />
+		<result property="isDel" column="is_del" />
+		<result property="createTime" jdbcType="TIMESTAMP" column="create_time" />
+		<result property="updateTime" jdbcType="TIMESTAMP" column="update_time" />
+		<result property="operator" column="operator" />
+	</resultMap>
+
+	<select id="getAllCategories" resultMap="categoryMap">
+		select * from
+		tb_category where is_del=0 order by create_time desc
+	</select>
+
+	<select id="getPageCategories" resultMap="categoryMap">
+		select * from tb_category where is_del=0
+		<if test="showIndex != null and '' != showIndex and '2' != showIndex ">
+			and show_index=#{showIndex}
+		</if>
+		<if test="nameLike != null and '' != nameLike">
+			and category_name like concat('%',#{nameLike},'%')
+		</if>
+		order by create_time desc
+	</select>
+
+	<select id="getByName" parameterType="map" resultMap="categoryMap">
+		select *
+		from tb_category where category_name=#{name} and is_del=0 order by
+		create_time desc
+	</select>
+
+	<select id="getById" parameterType="long" resultMap="categoryMap">
+		select * from tb_category where is_del=0 and category_id=#{categoryId} <!-- 
+			order by create_time desc -->
+	</select>
+
+	<insert id="add" parameterType="category" useGeneratedKeys="true"
+		keyProperty="category_id">
+		insert into
+		tb_category(category_name, description,label_type,
+		icon_on, icon_off, app_icon, weight, show_index, index_weight, is_del,
+		create_time, update_time, operator)
+		values(#{categoryName},#{description},#{labelType},#{iconOn},#{iconOff},#{appIcon},#{weight},#{showIndex},#{indexWeight},#{isDel},now(),now(),#{operator});
+	</insert>
+
+	<!-- 软删除， 设置isdel=1 -->
+	<update id="deleteById" parameterType="map">
+		update tb_category set
+		is_del=1 , update_time = now(), operator = #{operator} 
+		where
+		category_id=#{categoryId}
+	</update>
+
+
+	<update id="updateCategory" parameterType="category">
+		update tb_category set
+		category_name=#{categoryName}, description=#{description},label_type=#{labelType},
+		icon_on=#{iconOn}, icon_off=#{iconOff},app_icon=#{appIcon}, weight=#{weight},
+		show_index=#{showIndex}, index_weight=#{indexWeight}, is_del=#{isDel},
+		update_time=now(),
+		operator=#{operator}
+		where
+		category_id=#{categoryId}
+	</update>
+
+	<select id="getCateGoryByUserId" parameterType="long" resultMap="categoryMap">
+		SELECT c.* FROM tb_category c,tb_user_category uc	WHERE c.category_id = uc.category_id AND uc.user_id =#{userId} and uc.is_del='0'
+	</select>
+
+</mapper>

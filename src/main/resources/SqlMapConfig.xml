@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties>
+        <property name="dialectClass" value="com.imxiaomai.mall.model.dialect.MySQLDialect"/>
+    </properties>
+    
+	<typeAliases>
+		<typeAlias type="com.mall.admin.vo.mallbase.MallIni" alias="MallIni"/>
+		<typeAlias type="com.mall.admin.vo.mallbase.College" alias="college"/>
+		<typeAlias type="com.mall.admin.vo.mallbase.City" alias="city"/>
+		<typeAlias type="com.mall.admin.vo.mallbase.Storage" alias="storage"/>
+		<typeAlias type="com.mall.admin.vo.user.User" alias="user"/>
+		<typeAlias type="com.mall.admin.vo.user.UserAndCategory" alias="userandcategory"/>
+		<typeAlias type="com.mall.admin.vo.user.Menu" alias="menu"/>
+		<typeAlias type="com.mall.admin.vo.user.Role" alias="role"/>
+		<typeAlias type="com.mall.admin.vo.wms.WmsGoods" alias="wmsgoods"/>
+		<typeAlias type="com.mall.admin.vo.wms.WmsGoods4BgSkuInfo" alias="wmsgoods4bgsku"/>
+		<typeAlias type="com.mall.admin.vo.wms.StorageGoodsStock" alias="storagegoodsstock"/>
+		
+		<typeAlias type="com.mall.admin.vo.category.Category" alias="category"/>
+		
+		<typeAlias type="com.mall.admin.vo.order.PrintInfo" alias="printInfo"/>
+		<typeAlias type="com.mall.admin.vo.order.Order" alias="order"/>
+		<typeAlias type="com.mall.admin.vo.order.ChildOrder" alias="childOrder"/>
+		<typeAlias type="com.mall.admin.vo.order.ChildOrderDetail" alias="childOrderDetail"/>
+		<typeAlias type="com.mall.admin.vo.order.OutStorageRecord" alias="outStorageRecord"/>
+		<typeAlias type="com.mall.admin.vo.couponRule.CouponRule" alias="couponRule"/>
+		<typeAlias type="com.mall.admin.vo.couponRule.CouponCollege" alias="couponCollege"/>
+		<typeAlias type="com.mall.admin.vo.couponRule.CouponRegion" alias="couponRegion"/>
+
+		
+		<typeAlias type="com.mall.admin.vo.seller.Seller" alias="seller"/>
+		<typeAlias type="com.mall.admin.vo.order.Withdraw" alias="Withdraw.xml"/>
+		
+		<!-- zhangshuai -->
+		<!-- goods -->
+		<typeAlias type="com.mall.admin.vo.goods.BgGoods" alias="BgGoods"/>
+		<typeAlias type="com.mall.admin.vo.goods.BgGoodsRegion" alias="BgGoodsRegion"/>
+		<typeAlias type="com.mall.admin.vo.goods.BgSku" alias="BgSku"/>
+		<typeAlias type="com.mall.admin.vo.goods.BgSkuGbm" alias="BgSkuGbm"/>
+		<typeAlias type="com.mall.admin.vo.goods.Goods" alias="Goods"/>
+		<typeAlias type="com.mall.admin.vo.goods.GoodsProperty" alias="GoodsProperty"/>
+		<typeAlias type="com.mall.admin.vo.goods.PropertyCategory" alias="PropertyCategory"/>
+		<typeAlias type="com.mall.admin.vo.goods.PropertyName" alias="PropertyName"/>
+		<typeAlias type="com.mall.admin.vo.goods.PropertyValue" alias="PropertyValue"/>
+		<typeAlias type="com.mall.admin.vo.goods.Sku" alias="Sku"/>
+		<typeAlias type="com.mall.admin.vo.goods.SkuProperty" alias="SkuProperty"/>
+		<typeAlias type="com.mall.admin.vo.goods.dto.BgGoods4Manager" alias="BgGoods4Manager"/>
+		<typeAlias type="com.mall.admin.vo.goods.dto.PropertyDto" alias="PropertyDto"/>
+		<typeAlias type="com.mall.admin.vo.goods.BgGoodsImage" alias="BgGoodsImage"/>
+		<!-- banner -->
+		<typeAlias type="com.mall.admin.vo.banner.Banner" alias="Banner"/>
+		<typeAlias type="com.mall.admin.vo.banner.BannerCollege" alias="BannerCollege"/>
+		<typeAlias type="com.mall.admin.vo.banner.BannerRegion" alias="BannerRegion"/>
+		<!-- withdraw_reason -->
+		<typeAlias type="com.mall.admin.vo.order.WithdrawReason" alias="WithdrawReason"/>
+		<typeAlias type="com.mall.admin.vo.storage.StorageCollege" alias="StorageCollege"/>
+		
+		<typeAlias type="com.mall.admin.vo.supplier.Suppiler" alias="suppiler"/>
+		<typeAlias type="com.mall.admin.vo.category.ThirdCategory" alias="thirdCategory"/>
+
+		<!-- 售卖相关的类 -->
+		<typeAlias type="com.mall.admin.vo.sale.SaleInStorage" alias="saleInStorage"/>
+		<typeAlias type="com.mall.admin.vo.sale.SaleInCollege" alias="saleInCollege"/>
+		<typeAlias type="com.mall.admin.vo.sale.SaleSkuInfo" alias="saleSkuInfo"/>
+		<typeAlias type="com.mall.admin.vo.storage.StorageGoodsRecord" alias="StorageGoodsRecord"/>
+		<typeAlias type="com.mall.admin.vo.storage.RecordType" alias="recordType"/>
+		<!-- 活动相关的类 -->
+		<typeAlias type="com.mall.admin.vo.activity.BgGoodsForActivity" alias="bgGoodsForActivity"/>
+		<typeAlias type="com.mall.admin.vo.activity.BgSkuForActivity" alias="bgSkuForActivity"/>
+		<typeAlias type="com.mall.admin.vo.activity.ActivityGoods" alias="activityGoods"/>
+		<typeAlias type="com.mall.admin.vo.activity.ActivitySku" alias="activitySku"/>
+		<!-- 优惠券 -->
+<!--  	<typeAlias type="com.mall.admin.vo.wms.ApplyPayLog" alias="applyPayLog"/>-->
+		<typeAlias type="com.mall.admin.vo.ump.CouponBatch" alias="CouponBatch"/>
+		<typeAlias type="com.mall.admin.vo.ump.CouponDetail" alias="CouponDetail"/>
+		<typeAlias type="com.mall.admin.vo.ump.CouponRestrict" alias="CouponRestrict"/>
+		<typeAlias type="com.mall.admin.vo.ump.CouponBatchRelation" alias="CouponBatchRelation"/>
+		<typeAlias type="com.mall.admin.vo.ump.CouponGive" alias="CouponGive"/>
+		<typeAlias type="com.mall.admin.vo.ump.CouponGiveLog" alias="CouponGiveLog"/>
+		<typeAlias type="com.mall.admin.vo.ump.Coupon" alias="Coupon"/>
+		
+		<!--字典表 -->
+		<typeAlias type="com.mall.admin.vo.common.Dictionary" alias="Dictionary"/>
+		
+		<typeAlias type="com.mall.admin.vo.delivery.DeliverCompany" alias="DeliverCompany"/>
+		<typeAlias type="com.mall.admin.vo.delivery.Delivery" alias="Delivery"/>
+		<typeAlias type="com.mall.admin.vo.navigation.Navigation" alias="Navigation"/>
+		<typeAlias type="com.mall.admin.vo.navigation.NavigationActivity" alias="NavigationActivity"/>
+		<typeAlias type="com.mall.admin.vo.navigation.NavigationCollege" alias="NavigationCollege"/>
+
+
+		<typeAlias type="com.mall.admin.vo.navigation.NavigationMenu" alias="NavigationMenu"/>
+		<typeAlias type="com.mall.admin.vo.navigation.NavigationGoods" alias="NavigationGoods"/>
+		
+		<typeAlias type="com.mall.admin.vo.activitytemplate.ActivityTemplate" alias="ActivityTemplate"/>
+		<typeAlias type="com.mall.admin.vo.activity.TemplateActivity" alias="TemplateActivity"/>
+
+		<!-- 商户管理 -->
+		<typeAlias type="com.mall.admin.vo.merchant.Merchant" alias="merchant"/>
+		<typeAlias type="com.mall.admin.vo.merchant.MerChantSeq" alias="merchantSeq"/>
+		<typeAlias type="com.mall.admin.vo.merchant.ThirdPartyOrder" alias="thirdPartyOrder"/>
+		<typeAlias type="com.mall.admin.vo.merchant.MerchantSummaryOrder" alias="summeryOrder"/>
+		
+		<!-- 快递单号 -->
+		<typeAlias type="com.mall.admin.vo.express.ExpressBill" alias="ExpressBill"/>
+		
+
+	</typeAliases>
+	
+	<mappers>
+		<!-- <mapper resource="mybatis/MALLADMIN_College.xml"/> -->
+		<mapper resource="mybatis/CollegeMapper.xml"/>
+		<mapper resource="mybatis/StorageRecordModifylogMapper.xml"/>
+		<mapper resource="mybatis/MALLADMIN_City.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Storage.xml"/>
+		<mapper resource="mybatis/MALLADMIN_User.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Role.xml"/>
+		<mapper resource="mybatis/MALLADMIN_WMS_Goods.xml"/>
+		<mapper resource="mybatis/Mall_Category.xml"/>		
+		<mapper resource="mybatis/Order.xml"/>
+		<mapper resource="mybatis/Child_Order.xml"/>
+		<mapper resource="mybatis/MALLADMIN_OutStorageRecord.xml"/>
+		<mapper resource="mybatis/MallADMIN_Supplier.xml"/>
+		<mapper resource="mybatis/Mall_Property_Category.xml"/>
+		
+		<mapper resource="mybatis/Child_Order_Detail.xml"/>
+		<mapper resource="mybatis/Mall_Seller.xml"/>
+		<mapper resource="mybatis/WithdrawMapper.xml"/>
+		<mapper resource="mybatis/CouponRuleMapper.xml"/>
+		<mapper resource="mybatis/CouponCollegeMapper.xml"/>
+		<mapper resource="mybatis/CouponRegionMapper.xml"/>
+
+		<!-- activity -->
+		<mapper resource="mybatis/ActivityMapper.xml"/>
+		<mapper resource="mybatis/ActivityTimeMapper.xml"/>
+		<mapper resource="mybatis/ActivityCollegeMapper.xml"/>
+		<mapper resource="mybatis/ActivityRegionMapper.xml"/>
+
+		<!-- zhangshuai -->
+		<mapper resource="mybatis/MALLADMIN_BgGoods.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BgGoodsRegion.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BgSku.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BgSkuGbm.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Goods.xml"/>
+		<mapper resource="mybatis/MALLADMIN_GoodsProperty.xml"/>
+		<mapper resource="mybatis/MALLADMIN_PropertyCategory.xml"/>
+		<mapper resource="mybatis/MALLADMIN_PropertyName.xml"/>
+		<mapper resource="mybatis/MALLADMIN_PropertyValue.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Sku.xml"/>
+		<mapper resource="mybatis/MALLADMIN_SkuProperty.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Storage_Goods_Stock.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Storage_Goods_Record.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BgGoodsImage.xml"/>
+		<!-- banner -->
+		<mapper resource="mybatis/MALLADMIN_Banner.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BannerCollege.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BannerRegion.xml"/>
+		<!-- withdraw_reason -->
+		<mapper resource="mybatis/MALLADMIN_WithdrawReason.xml"/>
+		<mapper resource="mybatis/MALLADMIN_StorageCollege.xml"/>
+
+		<!-- 售卖相关的配置文件 -->
+		<mapper resource="mybatis/MALLADMIN_SaleInfo.xml"/>
+		
+		<!-- 活动相关的配置文件 -->
+		<mapper resource="mybatis/MALLADMIN_BgSkuForActivity.xml"/>
+		<mapper resource="mybatis/MALLADMIN_BgGoodsForActivity.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Activity_Goods.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Activity_Sku.xml"/>
+		
+		<mapper resource="mybatis/ChildOrderMapper.xml"/>
+		<mapper resource="mybatis/MALLADMIN_RecordType.xml"/>
+<!--  	<mapper resource="mybatis/MALLADMIN_ApplyPayLog.xml"/> -->
+		
+		<!-- 优惠券  -->
+		<mapper resource="mybatis/UMP_CouponBatch.xml"/>
+		<mapper resource="mybatis/UMP_CouponDetail.xml"/>
+		<mapper resource="mybatis/UMP_CouponRestrict.xml"/>
+		<mapper resource="mybatis/UMP_CouponBatchRelation.xml"/>
+		<mapper resource="mybatis/UMP_CouponGive.xml"/>
+		<mapper resource="mybatis/UMP_CouponGiveLog.xml"/>
+		<mapper resource="mybatis/UMP_Coupon.xml"/>
+		<!-- 裂变流程开关控制 -->
+		<mapper resource="mybatis/Mall_Ini.xml"/>
+		
+		<mapper resource="mybatis/ApplyPayLogMapper.xml"/>
+		<mapper resource="mybatis/SubscribeDetailMapper.xml"/>
+		
+		<!-- 字典表 -->
+		<mapper resource="mybatis/Dictionary.xml"/>
+
+		<mapper resource="mybatis/Notice.xml"/>
+		
+		<mapper resource="mybatis/MALLADMIN_DeliverCompany.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Delivery.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Navigation.xml"/>
+
+		<mapper resource="mybatis/MALLADMIN_NavigationActivity.xml"/>
+		
+
+		<mapper resource="mybatis/MALLADMIN_NavigationMenu.xml"/>
+		<mapper resource="mybatis/MALLADMIN_NavigationGoods.xml"/>
+
+		<mapper resource="mybatis/MALLADMIN_ActivityTemplate.xml"/>
+		
+		<mapper resource="mybatis/MALLADMIN_TemplateActivity.xml"/>
+
+		<!-- 商户管理 -->
+		<mapper resource="mybatis/MALLADMIN_Merchant.xml"/>
+		<mapper resource="mybatis/MALLADMIN_Thirdparty_Order.xml"/>
+		
+		<!-- 快递单号 -->
+		<mapper resource="mybatis/Express_Bill.xml"/>
+		
+	</mappers>
+</configuration>

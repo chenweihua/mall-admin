@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 CST 2013-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="College">	
+
+	<resultMap id="collegeMap" type="college">
+		<result property="college_id" column="college_id"/>
+		<result property="college_name" column="college_name"/>
+		<result property="city_id" column="city_id"/>
+		<result property="rdcstorage_id" column="rdc_storage_id"/>
+		<result property="ldcstorage_id" column="ldc_storage_id"/>
+		<result property="create_time" column="create_time"/>
+		<result property="update_time" column="update_time"/>
+
+		<result property="isdel" column="isdel"/>
+		<result property="isopen" column="isopen"/>
+		<result property="isshow" column="is_show"/>
+
+		<result property="isdel" column="is_del"/>
+		<result property="isopen" column="is_open"/>
+		<result property="isstop" column="is_stop"/>
+
+		<result property="delivery_type" column="delivery_type"/>
+		<result property="delivery_address" column="delivery_address"/>
+	</resultMap>
+
+	<select id="getAllCollege" resultMap="collegeMap">
+		select * from tb_college
+	</select>
+	
+	
+	<select id="getPageCollegeByPage" resultMap="collegeMap">
+	    select * from tb_college where is_del=0
+ 		<trim>
+            <if test="college_id_name !='' and college_id_name != null">
+                and (college_name like '%#{college_id_name}%' or college_id like '%#{college_id_name}%')
+            </if>
+
+            <if test="city_id !=null and city_id > 0">
+                and city_id = #{city_id}
+            </if>
+            <if test="isopen !=null">
+            	and isopen = #{isopen}
+            </if>
+            <if test="isshow != null">
+            	and isshow = #{isshow}    
+            </if>
+        </trim> 
+        order by college_id desc
+	</select>
+	
+<!--  	<select id="getCountByParams" resultType="java.lang.Long">
+		select count(*) from tb_college where is_del=0
+		 <trim>
+            <if test="college_id_name !='' and college_id_name != null">
+                and (college_name like '%#{college_id_name}%' or college_id like '%#{college_id_name}%')
+            </if>
+
+            <if test="city_id !=null and city_id > 0">
+                and city_id = #{city_id}
+            </if>
+            <if test="isopen !=null ">
+            	and isopen = #{isopen}
+            </if>
+            <if test="isshow != null">
+            	and isshow = #{isshow}    
+            </if>
+        </trim> 
+	</select>
+
+
+	<select id="getCollegeById" resultMap="collegeMap" parameterType="java.lang.Long">
+	    select * from tb_college where is_del = 0 and is_open = 0 and college_id = #{collegeId}
+	</select>
+
+	<select id="getListByLdcStorageId" resultMap="collegeMap">
+	    select * from tb_college where is_del=0 and ldc_storage_id = #{ldcstorage_id}
+	</select>
+	
+	<select id="getListByRdcStorageId" resultMap="collegeMap">
+	    select * from tb_college where is_del=0 and rdc_storage_id = #{rdcstorage_id}
+	</select>
+	    -->
+	    
+	<select id="getListByCityId" resultMap="collegeMap">
+	    select * from tb_college where is_del = 0 and city_id = #{city_id}
+	</select>
+	
+	<insert id="addCollege"  parameterType="college">    	
+	    insert into tb_college (college_id, college_name, city_id, rdc_storage_id, ldc_storage_id, operator,is_del ,is_open,is_show ,latitude,longitude)
+	    values(#{college_id},#{college_name},#{ city_id},#{rdcstorage_id},#{ldcstorage_id},#{isdel},#{operator},#{isopen},#{isshow},#{latitude},#{longitude})
+	    <selectKey resultType="java.lang.Long" keyProperty="Id" order="AFTER" >
+    		SELECT LAST_INSERT_ID() AS college_id
+  		</selectKey>
+	</insert>
+	
+	<update id="College.updateCollege" parameterType="college">  
+ 		update tb_college set college_name = #{college_name},city_id=#{city_id},rdc_storage_id=#{rdcstorage_id},ldc_storage_id=#{ldcstorage_id},operator=#{operator},is_open=#{isopen},
+ 		is_show=#{isshow},latitude=#{latitude},longitude=#{longitude} where college_id=#{college_id}
+    </update> 
+    
+    <update id="College.deleCollege" parameterType="long">  
+ 		update tb_college set is_del=0 where college_id = #{college_id}
+    </update> 
+
+	
+</mapper>

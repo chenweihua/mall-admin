@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ActivitySku">
+
+	<!-- 仓库中销售的商品信息 -->
+	<resultMap id="activitySkuMap" type="activitySku">
+		<result property="activitySkuId" column="activity_sku_id" />
+		<result property="activityGoodsId" column="activity_goods_id" />
+		<result property="activityBgSkuId" column="activity_bg_sku_id" />
+		<result property="collegeId" column="college_id" />
+		<result property="bgSkuId" column="bg_sku_id" />
+		<result property="originPrice" column="origin_price" />
+		<result property="activityPrice" column="activity_price" />
+		<result property="skuType" column="sku_type" />
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+		<result property="stock" column="stock" />
+		<result property="storageType" column="distribute_type" />
+		<result property="isDel" column="is_del" />
+		<result property="storageId" column="storage_id" />
+	</resultMap>
+	
+	<insert id="insertActivitySku" useGeneratedKeys="true" keyColumn="activitySkuId" parameterType="activitySku">
+		insert into tb_activity_sku(`activity_goods_id`,`activity_bg_sku_id`,`college_id`,`bg_sku_id`,`origin_price`,`activity_price`,`sku_type`,`image_url`,`stock`,`distribute_type`,`is_del`,`storage_id`) 
+		values(#{activityGoodsId},#{activityBgSkuId},#{collegeId},#{bgSkuId},#{originPrice},#{activityPrice},#{skuType},#{imageUrl,jdbcType=VARCHAR},#{stock},#{storageType},#{isDel},#{storageId})
+	</insert>
+	
+	<update id="updateActivitySku" parameterType="hashmap">
+		update tb_activity_sku set origin_price=#{originPrice},activity_price=#{activityPrice},stock=#{stock} where activity_bg_sku_id=#{activityBgSkuId}
+	</update>
+
+	<select id="selectByUnionKey" parameterType="hashmap" resultMap="activitySkuMap">
+		select * from tb_activity_sku
+		where activity_bg_sku_id = #{activityBgSkuId} and college_id = #{collegeId}
+	</select>
+	
+		<select id="selectListByBgSkuIdAndCID" parameterType="hashmap" resultMap="activitySkuMap">
+		select * from tb_activity_sku
+		where activity_bg_sku_id = #{activityBgSkuId} 
+		<if test="collegeId!=null" >
+			and college_id = #{collegeId}
+		</if>
+	</select>
+</mapper>

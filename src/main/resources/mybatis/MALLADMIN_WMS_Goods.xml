@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WmsGoods">
+
+	<resultMap id="wmsGoodsMap" type="wmsgoods">
+		<result property="wms_goods_id" column="wms_goods_id" />
+		<result property="wms_goods_name" column="wms_goods_name" />
+		<result property="wms_goods_gbm" column="wms_goods_gbm" />
+		<result property="short_name" column="short_name" />
+		<result property="brand" column="brand" />
+		<result property="catg_name" column="catg_name" />
+		<result property="sale_spec" column="sale_spec" />
+		<result property="unit" column="unit" />
+		<result property="package_spec" column="package_spec" />
+		<result property="origin_place" column="origin_place" />
+		<result property="shelf_life" column="shelf_life" />
+		<result property="operator_id" column="operator_id" />
+		<result property="create_time" jdbcType="TIMESTAMP" column="create_time" />
+		<result property="update_time" jdbcType="TIMESTAMP" column="update_time" />
+		<result property="status" column="status" />
+		<result property="wmsGoodsCode" column="wms_goods_code" />
+		<result property="storageId" column="storage_id" />
+	</resultMap>
+	
+	<resultMap id="WmsGoods4BgSkuMap" type="wmsgoods4bgsku">
+		<result  property="bgSkuId" column="bg_sku_id" />
+		<result  property="wmsGoodsName" column="wms_goods_name" />
+		<result  property="wmsGoodsGbm" column="wms_goods_gbm" />
+		<result  property="skuNum" column="num" />
+	</resultMap>
+	
+	<select id="queryWmsGoods4BgSku" resultMap="WmsGoods4BgSkuMap">
+		select sg.bg_sku_id,g.wms_goods_name,g.wms_goods_gbm,sg.num from tb_wms_goods g,tb_bg_sku_gbm sg where sg.bg_sku_id=#{bgSkuId} and sg.wms_goods_id = g.wms_goods_id
+	</select>
+	
+	<select id="getWmsGoods4BgSkuList" resultMap="WmsGoods4BgSkuMap">
+		select sg.bg_sku_id,g.wms_goods_name,g.wms_goods_gbm,sg.num 
+		from tb_wms_goods g,tb_bg_sku_gbm sg 
+		where sg.wms_goods_id = g.wms_goods_id
+	</select>
+
+	<select id="queryWmsGoods" resultMap="wmsGoodsMap">
+		select * from
+		tb_wms_goods where 1=1
+		<if test="wms_goods_gbm != null ">
+			and wms_goods_gbm = #{wms_goods_gbm}
+		</if>
+		<if test="wms_goods_id != 0 ">
+			and wms_goods_id = #{wms_goods_id}
+		</if>
+	</select>
+	
+	<select id = "queryByGbm" resultMap = "wmsGoodsMap" parameterType="hashmap">
+	    select * 
+	    from tb_wms_goods
+	    where wms_goods_gbm = #{wms_goods_gbm}
+	    <if test="storageId != null and storageId != -1">
+			and storage_id = #{storageId}
+		</if>
+	</select>
+
+	<select id="getWmsGoodsById" resultMap="wmsGoodsMap">
+		select * from
+		tb_wms_goods
+		where wms_goods_id=#{wms_goods_id}
+	</select>
+
+	<select id="getPageWmsGoodsByPage" resultMap="wmsGoodsMap">
+		select * from
+		tb_wms_goods where 1=1
+		<if test="storageId != -2">
+			and storage_id = #{storageId}
+		</if>
+		<if test="wms_goods_gbm_like != null ">
+			and (wms_goods_gbm like CONCAT('%',#{wms_goods_gbm_like},'%' ) 
+		</if>
+		<if test="wms_goods_name_like != null ">
+			or wms_goods_name like CONCAT('%',#{wms_goods_gbm_like},'%' ) ) 
+		</if>
+		order by create_time desc
+	</select>
+
+	<insert id="insertIntoWmsGoods" parameterType="wmsgoods">
+		<selectKey resultType="java.lang.Long" keyProperty="wms_goods_id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+		insert into
+		tb_wms_goods(wms_goods_name,wms_goods_gbm,short_name,brand,catg_name,sale_spec,unit,package_spec,origin_place,shelf_life,operator_id,create_time,update_time,status,wms_goods_code,storage_id)
+		values(#{wms_goods_name},#{wms_goods_gbm},#{short_name},#{brand},#{catg_name},#{sale_spec},#{unit},#{package_spec},#{origin_place},#{shelf_life},#{operator_id},now(),now(),#{status},#{wmsGoodsCode},#{storageId});
+	</insert>
+
+	<update id="updateWmsGoods" parameterType="wmsgoods">
+		update tb_wms_goods
+		set
+		wms_goods_name=#{wms_goods_name}, wms_goods_gbm=#{wms_goods_gbm},
+		short_name=#{short_name}, brand=#{brand}, catg_name=#{catg_name},
+		sale_spec=#{sale_spec}, unit=#{unit}, package_spec=#{package_spec},
+		origin_place=#{origin_place}, shelf_life=#{shelf_life},
+		operator_id=#{operator_id}, update_time=now(), status=#{status},wms_goods_code=#{wmsGoodsCode}
+		where
+		wms_goods_id=#{wms_goods_id}
+	</update>
+	
+	<delete id="deletwmsgoodsregion" parameterType="long">
+		delete from tb_wms_goods_region where wms_goods_id=#{wms_goods_id}
+	</delete>
+	
+	<insert id="insertwmsggoodsregion" parameterType="hashmap">
+		insert into tb_wms_goods_region(wms_goods_id,region_id,region_type,is_del) values(#{wms_goods_id},#{region_id},#{region_type},0)
+	</insert>
+
+	<select id="getStorageGoodsByRegionId" parameterType="hashmap" resultType="Long">
+		select wms_goods_id from tb_wms_goods_region where 1=1
+		<if test="region_type != null ">
+			and region_type = #{region_type}
+		</if>
+		<if test="region_id != null ">
+			and region_id = #{region_id}
+		</if>
+	</select>
+	
+	<select id="queryById" resultMap="wmsGoodsMap">
+	    select * from
+		tb_wms_goods
+		where wms_goods_id=#{wms_goods_id}
+	</select>
+	
+	<select id="queryByGbmAndNo" parameterType="hashmap" resultMap="wmsGoodsMap">
+	    select * from
+		tb_wms_goods
+		where wms_goods_gbm=#{wms_goods_gbm} and wms_goods_code=#{wmsGoodsCode};
+	</select>
+	
+</mapper>

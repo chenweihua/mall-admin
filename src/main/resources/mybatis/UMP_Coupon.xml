@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Coupon" >
+  <resultMap id="BaseResultMap" type="com.mall.admin.vo.ump.Coupon" >
+    <result column="batch_id" property="batchId" jdbcType="BIGINT" />
+    <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
+    <result column="platform_type" property="platformType" jdbcType="TINYINT" />
+    <result column="used_money" property="usedMoney" jdbcType="BIGINT" />
+    <result column="total_money" property="totalMoney" jdbcType="BIGINT" />
+    <result column="used_number" property="usedNumber" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="feature" property="feature" jdbcType="VARCHAR" />
+    <result column="batch_desc" property="batchDesc" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="BIGINT" />
+    <result column="coupon_detail_id" property="couponDetailId" jdbcType="BIGINT" />
+    <result column="orderId" property="orderId" jdbcType="BIGINT" />
+    <result column="release_business_id" property="releaseBusinessId" jdbcType="BIGINT" />
+    <result column="business_id" property="businessId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="source" property="source" jdbcType="TINYINT" />
+    <result column="college_id" property="collegeId" jdbcType="INTEGER" />
+    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+    <result column="receiver_phone" property="receiverPhone" jdbcType="VARCHAR" />
+    <result column="total_pay" property="totalPay" jdbcType="INTEGER" />
+    <result column="online_pay" property="onlinePay" jdbcType="INTEGER" />
+    <result column="online_pay_id" property="onlinePayId" jdbcType="VARCHAR" />
+    <result column="coupon_pay" property="couponPay" jdbcType="BIGINT" />
+    <result column="fill_pay" property="fillPay" jdbcType="INTEGER" />
+    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    <result column="pay_create_time" property="payCreateTime" jdbcType="TIMESTAMP" />
+    <result column="pay_update_time" property="payUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="sku_id" property="skuId" jdbcType="INTEGER" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
+    <result column="sku_num" property="skuNum" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="getUserAllByPhone" parameterType="int" resultMap="BaseResultMap">
+  select a.*,o.college_id,o.receiver_name,o.receiver_phone,o.total_pay,o.online_pay,o.online_pay_id,o.coupon_pay,o.fill_pay,
+	o.`status` as pay_status,o.create_time as pay_create_time,o.update_time as pay_update_time,
+	o.sku_id,o.category_id,o.sku_name,o.sku_num from 
+	(select t.batch_id,t.batch_name,t.platform_type,t.used_money,t.total_money,t.used_number,t.activity_id,
+	d.create_time,d.update_time,d.start_time,d.end_time,t.feature,t.batch_desc,t.money,d.coupon_detail_id,
+	d.orderId,d.release_business_id,d.`status`,d.source,d.business_id
+	 from tb_coupon_batch t,tb_coupon_detail d where d.business_id=#{userId} and t.batch_id = d.batch_id)a
+	LEFT JOIN(select oo.*,dd.sku_id,dd.category_id,dd.sku_name,dd.sku_num from tb_order oo, tb_child_order_detail dd where oo.user_id=#{userId} and oo.order_id =dd.order_id)o 
+	 on a.orderId = o.order_id
+  </select>
+  
+  <select id="getCouponRewardsAllByPhone" parameterType="int" resultMap="BaseResultMap">
+	  select a.* ,o.college_id,o.receiver_name,o.receiver_phone,o.total_pay,o.online_pay,o.online_pay_id,o.coupon_pay,o.fill_pay,
+	o.`status` as pay_status,o.create_time as pay_create_time,o.update_time as pay_update_time,o.order_id as orderId,
+	dd.sku_id,dd.category_id,dd.sku_name,dd.sku_num from
+	(select t.batch_id,t.batch_name,t.platform_type,t.used_money,t.total_money,t.used_number,t.activity_id,
+	d.create_time,d.update_time,d.start_time,d.end_time,t.feature,t.batch_desc,t.money,d.coupon_detail_id,
+	d.release_business_id,d.business_id,d.`status`,d.source
+	 from tb_coupon_batch t,tb_coupon_detail d where d.release_business_id=#{userId} and t.batch_id = d.batch_id)a,
+	tb_order o, tb_child_order_detail dd where o.user_id =a.business_id and o.order_id =dd.order_id
+  </select>
+  
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sale">
+
+
+	<!-- 仓库中销售的商品信息 -->
+	<resultMap id="saleMap" type="saleInStorage">
+		<result property="bg_goods_id" column="bg_goods_id" />
+		<result property="bg_goods_name" column="bg_goods_name" />
+		<result property="bg_goods_describ" column="description" />
+		<result property="goods_type" column="goods_type" />
+		<result property="storage_id" column="storage_id" />
+		<result property="storage_name" column="storage_name" />
+		<result property="category_id" column="category_id" />
+		<result property="category_name" column="category_name" />
+	</resultMap>
+
+	<!-- 学校中销售的商品信息 -->
+	<resultMap id="saleCollegeMap" type="saleInCollege">
+		<result property="goods_id" column="goods_id" />
+		<result property="goods_name" column="bg_goods_name" />
+		<result property="college_id" column="college_id" />
+		<result property="college_name" column="college_name" />
+		<result property="weight" column="weight" />
+		<result property="stock" column="stock" />
+		<result property="status" column="sku_status" />
+	</resultMap>
+	
+		<!-- 销售商品中sku的信息 -->
+	<resultMap id="saleSkuMap" type="saleSkuInfo">
+		<result property="bg_goods_name" column="bg_goods_name" />
+		<result property="description" column="description" />
+		<result property="unit" column="unit" />
+		<result property="bgSkuId" column="bg_sku_id" />
+		<result property="originPrice" column="origin_price" />
+	</resultMap>
+
+
+	<!-- 获得RDC仓商品信息 -->
+	<select id="getRdcStorageGoodsInfoByPage" parameterType="hashmap"
+		resultMap="saleMap">
+		SELECT distinct bg.bg_goods_id,bg.bg_goods_name,
+		bg.description,bg.goods_type,s.storage_id,s.storage_name,ca.category_id,
+		ca.category_name FROM
+		tb_bg_goods bg,tb_goods g, tb_college c,
+		tb_storage s, tb_category ca,tb_sku gs
+		WHERE g.is_del='0' and gs.is_del = 0 and c.is_del='0' and s.is_del='0' and bg.bg_goods_id = g.bg_goods_id AND g.college_id = c.college_id AND
+		g.goods_id = gs.goods_id and gs.distribute_type = 0 and c.rdc_storage_id = s.storage_id AND ca.category_id = bg.category_id and g.`goods_status` in ('1','2','3')
+		<if test="storage_id != null and storage_id !=0">
+			and s.storage_id=#{storage_id} 
+		</if>
+		<if test="storage_id == null or storage_id ==0">
+			and g.storage_id = 0 
+		</if>
+		<if test="goods_name != null and goods_name !='' ">
+			and bg.bg_goods_name like CONCAT('%',#{goods_name},'%' )
+		</if>
+		<if test="status != null and status !=0 ">
+			and g.`goods_status` = #{status}
+		</if>
+		<if test="category_id != null and category_id!=0">
+			and ca.category_id = #{category_id}
+		</if>
+		<if test="collegeId != null and collegeId!=0">
+			and g.college_id = #{collegeId}
+		</if>
+	</select>
+
+	<!-- 获得LDC仓商品信息 -->
+	<select id="getLdcStorageGoodsInfoByPage" parameterType="hashmap"
+		resultMap="saleMap">
+		SELECT distinct bg.bg_goods_id,bg.bg_goods_name,
+		bg.description,bg.goods_type,s.storage_id,s.storage_name,ca.category_id,
+		ca.category_name FROM
+		tb_bg_goods bg,tb_goods g, tb_college c,
+		tb_storage s, tb_category ca,tb_sku gs
+		WHERE g.is_del='0' and gs.is_del = 0  and c.is_del='0' and s.is_del='0' and bg.bg_goods_id = g.bg_goods_id AND g.college_id = c.college_id AND
+		g.goods_id = gs.goods_id and gs.distribute_type = 1 and c.ldc_storage_id = s.storage_id AND ca.category_id = bg.category_id and g.`goods_status` in ('1','2','3')
+		<if test="storage_id != null and storage_id !=0">
+			and s.storage_id=#{storage_id} 
+		</if>
+		<if test="storage_id == null or storage_id ==0">
+			and g.storage_id = 0 
+		</if>
+		<if test="goods_name != null and goods_name !='' ">
+			and bg.bg_goods_name like CONCAT('%',#{goods_name},'%' )
+		</if>
+		<if test="status != null and status !=0 ">
+			and g.`goods_status` = #{status}
+		</if>
+		<if test="category_id != null and category_id!=0">
+			and ca.category_id = #{category_id}
+		</if>
+		<if test="collegeId != null and collegeId!=0">
+			and g.college_id = #{collegeId}
+		</if>
+	</select>
+	
+	<!-- 获得虚拟仓商品信息 -->
+	<select id="getVmStorageGoodsInfoByPage" parameterType="hashmap"
+		resultMap="saleMap">
+		SELECT distinct bg.bg_goods_id,bg.bg_goods_name,
+		bg.description,bg.goods_type,s.storage_id,s.storage_name,ca.category_id,
+		ca.category_name 
+		FROM tb_bg_goods bg,tb_goods g,
+		tb_storage s, tb_category ca,tb_sku gs
+		WHERE g.is_del='0' and gs.is_del = 0 and s.is_del='0' and bg.bg_goods_id = g.bg_goods_id AND g.storage_id = s.storage_id AND
+		g.goods_id = gs.goods_id and gs.distribute_type = 2 AND ca.category_id = bg.category_id
+		<if test="storage_id != null and storage_id !=0">
+			and s.storage_id=#{storage_id} 
+		</if>
+		<if test="goods_name != null and goods_name !='' ">
+			and bg.bg_goods_name like CONCAT('%',#{goods_name},'%' )
+		</if>
+		<if test="status != null and status !=0 ">
+			and g.`goods_status` = #{status}
+		</if>
+		<if test="category_id != null and category_id!=0">
+			and ca.category_id = #{category_id}
+		</if>
+		<if test="collegeId != null and collegeId!=0">
+			and g.college_id = #{collegeId}
+		</if>
+	</select>
+
+	<!-- 获得RDC仓下学校的商品信息 -->
+	<select id="getRdcStorageGoodsInCollege" parameterType="hashmap"
+		resultMap="saleCollegeMap">
+		SELECT
+		DISTINCT g.goods_id,g.bg_goods_name,c.college_id,c.college_name,s.stock,g.weight,s.sku_status
+		FROM
+		tb_goods g,
+		tb_sku s,
+		tb_storage st,
+		tb_college c
+		WHERE
+		g.goods_id = s.goods_id
+		AND s.distribute_type='0'
+		AND g.college_id = c.college_id
+		AND c.rdc_storage_id = st.storage_id
+		and g.bg_goods_id=#{bggoodsId}
+		and st.storage_id=#{storageId}
+		and s.is_del='0'
+		and g.is_del='0'
+		<if test="collegeId != null ">
+			and c.college_id=#{collegeId}
+		</if>
+	</select>
+
+	<!-- 获得LDC仓下学校的商品信息 -->
+	<select id="getLdcStorageGoodsInCollege" parameterType="hashmap"
+		resultMap="saleCollegeMap">
+		SELECT
+		DISTINCT g.goods_id,g.bg_goods_name,c.college_id,c.college_name,s.stock,g.weight,s.sku_status
+		FROM
+		tb_goods g,
+		tb_sku s,
+		tb_storage st,
+		tb_college c
+		WHERE
+		g.goods_id = s.goods_id
+		AND s.distribute_type='1'
+		AND g.college_id = c.college_id
+		AND c.ldc_storage_id = st.storage_id
+		and g.bg_goods_id=#{bggoodsId}
+		and st.storage_id=#{storageId}
+		and s.is_del='0'
+		and g.is_del='0'
+		<if test="collegeId != null ">
+			and c.college_id=#{collegeId}
+		</if>
+	</select>
+	
+	<!-- 获得虚拟仓下学校的商品信息 -->
+	<select id="getVmStorageGoodsInCollege" parameterType="hashmap"
+		resultMap="saleCollegeMap">
+		SELECT
+		DISTINCT g.goods_id,g.bg_goods_name,c.college_id,c.college_name,s.stock,g.weight,s.sku_status
+		FROM
+		tb_goods g,
+		tb_sku s,
+		tb_college c
+		WHERE
+		g.goods_id = s.goods_id
+		AND s.distribute_type='2'
+		AND g.college_id = c.college_id
+		and g.bg_goods_id=#{bggoodsId}
+		and g.storage_id=#{storageId}
+		and s.is_del='0'
+		and g.is_del='0'
+		<if test="collegeId != null ">
+			and c.college_id=#{collegeId}
+		</if>
+	</select>
+	
+		<!-- 获得聚合商品下聚合的商品信息 -->
+	<select id="getMoreSkuMap" parameterType="long"
+		resultMap="saleSkuMap">
+		SELECT
+			distinct bg.bg_goods_name,bg.description,bg.unit,bs.bg_sku_id,bs.origin_price
+		FROM
+			tb_bg_sku bs,
+			tb_bg_goods bg,
+			tb_sku_property sp
+		where sp.bg_goods_id=#{goods_id}
+		and sp.bg_sku_id=bs.bg_sku_id
+		and bs.bg_goods_id=bg.bg_goods_id
+	</select>
+	
+			<!-- 获得单品和组合品的商品信息 -->
+	<select id="getSkuMap" parameterType="long"
+		resultMap="saleSkuMap">
+		SELECT
+			bg.bg_goods_name,bg.description,bg.unit,bs.bg_sku_id,bs.origin_price
+		FROM
+			tb_bg_goods bg,tb_bg_sku bs
+		where bg.bg_goods_id=#{goods_id} and bs.bg_goods_id=bg.bg_goods_id
+	</select>
+	
+	<select id="queryStorageStock" parameterType="hashmap" resultType="Integer">
+		SELECT
+			sgs.stock
+		FROM
+			tb_bg_sku bs,
+			tb_bg_sku_gbm bsg,
+			tb_storage_goods_stock sgs
+		WHERE
+			bs.bg_goods_id =#{bgGoodsId}
+		AND bs.bg_sku_id = bsg.bg_sku_id
+		AND bsg.wms_goods_id = sgs.wms_goods_id
+		AND sgs.storage_id =#{storageId}
+	</select>
+
+</mapper>

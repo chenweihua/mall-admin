@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+<appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+        <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+        <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+    </Console>
+
+    
+    <RollingFile name="Rf-info" fileName="log/app-info.log"
+                 filePattern="log/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.info.log.gz">
+        <Filters>
+            <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Filters>
+        <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss,SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            <SizeBasedTriggeringPolicy size="500 MB"/>
+        </Policies>
+    </RollingFile>
+    <RollingFile name="Rf-error" fileName="log/app-error.log"
+                 filePattern="log/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error.log.gz">
+        <Filters>
+            <ThresholdFilter level="fatal" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Filters>
+        <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss,SSS} %-5level %l %C{36} %L %M - %m%xEx%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            <SizeBasedTriggeringPolicy size="500 MB"/>
+        </Policies>
+    </RollingFile>
+	 <RollingFile name="Rf-fatal" fileName="log/app-fatal.log"
+                 filePattern="log/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.fatal.log.gz">
+        <Filters>
+            <ThresholdFilter level="fatal" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Filters>
+        <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss,SSS} %-5level %l %C{36} %L %M - %m%xEx%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            <SizeBasedTriggeringPolicy size="500 MB"/>
+        </Policies>
+    </RollingFile>
+</appenders>
+<loggers>
+    <root level="trace">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Rf-info"/>
+        <appender-ref ref="Rf-error"/>
+		<appender-ref ref="Rf-fatal"/>
+    </root>
+</loggers>
+</configuration>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="DeliverCompany" >
+
+  <resultMap id="DeliverCompanyMap" type="DeliverCompany" >
+    
+    <id column="deliver_company_id" jdbcType="BIGINT" property="deliverCompanyId" />
+	<result column="deliver_company_code" jdbcType="VARCHAR" property="deliverCompanyCode" />
+	<result column="deliver_company_name" jdbcType="VARCHAR" property="deliverCompanyName" />
+	<result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  
+  
+  <sql id="deliver_company_Column_List">
+		deliver_company_id,
+		deliver_company_code,
+		deliver_company_name,
+		status
+  </sql>
+  
+  
+  <select id="getAllDeliverCompanys"  resultMap="DeliverCompanyMap">
+  		select 
+		 <include refid="deliver_company_Column_List" />
+		from tb_delivery_company order by weight desc
+  </select>
+  
+  <select id="getDeliverCompanyByCode"  resultMap="DeliverCompanyMap">
+  		select 
+		 <include refid="deliver_company_Column_List" />
+		from tb_delivery_company 
+		where deliver_company_code = #{value}
+  </select>
+  
+</mapper>

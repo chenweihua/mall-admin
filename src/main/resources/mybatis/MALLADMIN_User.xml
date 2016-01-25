@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User">
+
+	<resultMap id="userMap" type="user">
+		<result property="user_id" column="user_id" />
+		<result property="user_name" column="user_name" />
+		<result property="account" column="account" />
+		<result property="password" column="password" />
+		<result property="token" column="token" />
+		<result property="salt" column="salt" />
+		<result property="user_type" column="user_type" />
+		<result property="is_del" column="is_del" />
+		<result property="is_all_category" column="is_all_category" />
+		<result property="is_all_storage" column="is_all_storage" />
+	</resultMap>
+
+	<!-- 用户菜单对象 -->
+	<resultMap id="menuMap" type="menu">
+		<result property="menu_id" column="menu_id" />
+		<result property="menu_name" column="menu_name" />
+		<result property="pid" column="pid" />
+		<result property="level" column="level" />
+		<result property="menu_url" column="menu_url" />
+		<result property="menu_type" column="menu_type" />
+		<result property="weight" column="weight" />
+		<result property="is_del" column="is_del" />
+		<result property="is_admin" column="is_admin" />
+		<result property="message" column="message" />
+	</resultMap>
+
+	<!-- 用户角色对象 -->
+	<resultMap id="roleMap" type="role">
+		<result property="role_id" column="role_id" />
+		<result property="role_name" column="role_name" />
+		<result property="remark" column="remark" />
+		<result property="is_del" column="is_del" />
+		<result property="admin_flag" column="admin_flag" />
+	</resultMap>
+
+	<!-- 用户和类目关系表 -->
+	<resultMap id="userandcategoryMap" type="userandcategory">
+		<result property="user_category_id" column="user_category_id" />
+		<result property="user_id" column="user_id" />
+		<result property="category_id" column="category_id" />
+		<result property="is_del" column="is_del" />
+		<result property="create_time" column="create_time" />
+		<result property="createor" column="createor" />
+	</resultMap>
+
+
+
+	<insert id="insertUser" parameterType="user" useGeneratedKeys="true"
+		keyProperty="user_id">
+		insert into
+		tb_user(user_name,account,password,token,salt,user_type,is_del,is_all_category,is_all_storage)
+		values(#{user_name},#{account},#{password},#{token},#{salt},#{user_type},'0',#{is_all_category},#{is_all_storage})
+	</insert>
+	<!-- 更新用户信息，不更新用户账号 -->
+	<update id="updateUser" parameterType="user">
+		update tb_user set
+		user_name=#{user_name},is_del=#{is_del},is_all_category=#{is_all_category},is_all_storage=#{is_all_storage},user_type=${user_type}
+		where user_id=#{user_id}
+	</update>
+
+	<update id="updateUserPassword" parameterType="user">
+		update tb_user set
+		password=#{password},token=#{token}
+		where user_id=#{user_id}
+	</update>
+
+	<select id="getAllUser" resultMap="userMap">
+		select * from tb_user
+	</select>
+
+	<select id="getUserByAccount" parameterType="user" resultMap="userMap">
+		select * from tb_user where account=#{account}
+	</select>
+
+	<select id="getUserById" parameterType="user" resultMap="userMap">
+		select *
+		from tb_user where user_id=#{user_id}
+	</select>
+
+	<select id="getPageUserByPage" resultMap="userMap">
+		select * from tb_user where 1=1
+		<if test="user_name != null and '' != user_name">
+			and user_name like  CONCAT('%',#{user_name},'%' )
+		</if>
+		order by user_id desc
+	</select>
+
+	<!-- 根据用户的id获得用户的角色 -->
+	<select id="getUserRole" parameterType="long" resultMap="roleMap">
+		select
+		r.* from tb_role r,tb_user_role ur where r.role_id=ur.role_id and
+		ur.user_id=#{user_id}
+	</select>
+
+	<!-- 删除用户关联的角色 -->
+	<delete id="deleteUserRoleByUserId" parameterType="long">
+		delete
+		from
+		tb_user_role where user_id=#{user_id}
+	</delete>
+	<!-- 添加用户和角色关系 -->
+	<insert id="insertUserRole" parameterType="hashmap">
+		insert into
+		tb_user_role(user_id,role_id,is_del) values(#{user_id},#{role_id},'0')
+	</insert>
+
+	<!-- 如果是管理员，则获得所有的菜单 -->
+	<select id="getAllMenu" resultMap="menuMap">
+		select * from tb_menu where
+		is_del='0' order by weight desc
+	</select>
+
+	<!-- 根据角色id获得用户操作的菜单，则获得所有的菜单 -->
+	<select id="getMenuByRoleId" parameterType="long" resultMap="menuMap">
+		SELECT m.* FROM tb_menu m, tb_role_menu rm, tb_role r
+		WHERE m.menu_id =
+		rm.menu_id AND rm.role_id = r.role_id AND r.role_id = #{role_id} order
+		by m.weight desc
+	</select>
+
+	<!-- 获得普通菜单，给用户设置访问菜单的权限 -->
+	<select id="getCommonMenu" resultMap="menuMap">
+		select * from tb_menu where
+		is_del='0' and is_admin='0' order by weight desc
+	</select>
+
+	<!-- 删除用户关联的类目 -->
+	<delete id="deleteUserCategoryByUserId" parameterType="long">
+		delete
+		from tb_user_category where user_id=#{user_id}
+	</delete>
+	<!-- 添加用户类目 -->
+	<insert id="insertUserCategory" parameterType="userandcategory">
+		insert into
+		tb_user_category(user_id,category_id,is_del,create_time,createor)
+		values(#{user_id},#{category_id},'0',now(),#{createor})
+	</insert>
+	
+	<!-- 用户和仓库的关系 -->
+	<!-- 添加用户仓库 -->
+	<insert id="insertUserStorage" parameterType="hashmap">
+		insert into
+		tb_user_storage(user_id,storage_id,is_del,create_time,update_time,creator,operator)
+		values(#{user_id},#{storage_id},'0',now(),now(),#{creator},#{creator})
+	</insert>
+	
+	<!-- 添加用户仓库 -->
+	<update id="updateUserStorage" parameterType="hashmap">
+		update
+		tb_user_storage set is_del=#{is_del},update_time=now(),operator=#{operator} where user_id=#{user_id} and storage_id=#{storage_id}
+	</update>
+	
+		<!-- 查询用户仓库数量 -->
+	<select id="selectUserStorageCount" parameterType="hashmap" resultType="java.lang.Integer">
+		select count(1) from tb_user_storage where user_id=#{user_id} and storage_id=#{storage_id}
+	</select>
+	<!-- 更新用户是否负责全部仓库 -->
+	<update id="updateUserIsAllStorage" parameterType="hashmap">
+		update tb_user set is_all_storage=#{is_all_storage} where user_id = #{user_id}
+	</update>
+
+</mapper>

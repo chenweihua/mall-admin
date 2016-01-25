@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BgSkuGbm" >
+  <resultMap id="BaseResultMap" type="BgSkuGbm" >
+    <id column="sku_gbm_id" property="skuGbmId" jdbcType="INTEGER" />
+    <result column="bg_sku_id" property="bgSkuId" jdbcType="INTEGER" />
+    <result column="wms_goods_id" property="wmsGoodsId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    sku_gbm_id, bg_sku_id, wms_goods_id, num, create_time, update_time, operator, is_del
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_sku_gbm
+    where sku_gbm_id = #{skuGbmId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectByBgSkuIdWmsGoodsId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_sku_gbm
+    where bg_sku_id = #{bgSkuId,jdbcType=INTEGER} and wms_goods_id = #{wmsGoodsId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByBgSkuId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_sku_gbm
+    where bg_sku_id = #{bgSkuId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectByBgWmsGoodsIdNum" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT bsg.* 
+	FROM tb_bg_sku_gbm bsg,tb_bg_sku bs 
+	WHERE bsg.`is_del` = 0 AND bs.is_del = 0 AND bsg.`bg_sku_id` = bs.`bg_sku_id` AND bs.`sku_type` = 1
+    AND bsg.`wms_goods_id` = #{wmsGoodsId,jdbcType=INTEGER} AND bsg.num = #{num,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_bg_sku_gbm
+    where sku_gbm_id = #{skuGbmId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_bg_sku_gbm
+    set is_del = 1
+    where sku_gbm_id = #{skuGbmId,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insert" parameterType="BgSkuGbm" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuGbmId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_sku_gbm (bg_sku_id, wms_goods_id, 
+      num, create_time, update_time, 
+      operator, is_del)
+    values (#{bgSkuId,jdbcType=INTEGER}, #{wmsGoodsId,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{operator,jdbcType=INTEGER}, #{isDel,jdbcType=TINYINT})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="BgSkuGbm" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuGbmId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_sku_gbm
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgSkuId != null" >
+        bg_sku_id,
+      </if>
+      <if test="wmsGoodsId != null" >
+        wms_goods_id,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgSkuId != null" >
+        #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="wmsGoodsId != null" >
+        #{wmsGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="BgSkuGbm" >
+    update tb_bg_sku_gbm
+    <set >
+      <if test="bgSkuId != null" >
+        bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="wmsGoodsId != null" >
+        wms_goods_id = #{wmsGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = NOW(),
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where sku_gbm_id = #{skuGbmId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="BgSkuGbm" >
+    update tb_bg_sku_gbm
+    set bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      wms_goods_id = #{wmsGoodsId,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = NOW(),
+      operator = #{operator,jdbcType=INTEGER},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where sku_gbm_id = #{skuGbmId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByBgSkuIdWmsGoodsId" parameterType="BgSkuGbm" >
+    update tb_bg_sku_gbm
+    set num = #{num,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = NOW(),
+      operator = #{operator,jdbcType=INTEGER},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where bg_sku_id = #{bgSkuId,jdbcType=INTEGER} and wms_goods_id = #{wmsGoodsId,jdbcType=INTEGER}
+  </update>
+  
+    <!-- 根据后台单品（组合品）商品id获得供应链商品id -->
+  <select id="getWmsGoodsIdByBgGoodsId" resultType="java.lang.Long"  parameterType="java.lang.Long" >
+    select bsg.wms_goods_id 
+    from tb_bg_sku bs,tb_bg_sku_gbm bsg
+    where bsg.is_del=0 and bsg.bg_sku_id=bs.bg_sku_id and bs.bg_goods_id=#{bgGoodsId}
+  </select>
+  <select id="getBgSkuGbmByBgGoodsId" resultMap="BaseResultMap"  parameterType="java.lang.Long" >
+    select bsg.* 
+    from tb_bg_sku bs,tb_bg_sku_gbm bsg 
+    where bsg.is_del=0 and bsg.bg_sku_id=bs.bg_sku_id and bs.bg_goods_id=#{bgGoodsId}
+  </select>
+  <!--  根据后台聚合品商品id获得供应链商品id-->
+  <select id="getWmsGoodsIdByBgPolyGoodsId" resultType="java.lang.Long"  parameterType="java.lang.Long" >
+    select bsg.wms_goods_id 
+    from tb_bg_sku_gbm bsg,tb_sku_property sp 
+    where bsg.is_del=0 and sp.bg_goods_id=#{bgGoodsId} and bsg.bg_sku_id=sp.bg_sku_id
+  </select>
+    <!-- 根据后台商品id获得供应链商品id -->
+  <select id="getWmsGoodsIdByBgSkuId" resultType="java.lang.Long"  parameterType="java.lang.Long" >
+    select wms_goods_id
+    from tb_bg_sku_gbm
+    where is_del=0 and bg_sku_id = #{bgSkuId}
+  </select>
+</mapper>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="SkuProperty" >
+  <resultMap id="BaseResultMap" type="SkuProperty" >
+    <id column="sku_property_id" property="skuPropertyId" jdbcType="INTEGER" />
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="bg_sku_id" property="bgSkuId" jdbcType="INTEGER" />
+    <result column="property_value_id" property="propertyValueId" jdbcType="INTEGER" />
+    <result column="property_name_id" property="propertyNameId" jdbcType="INTEGER" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    sku_property_id, bg_goods_id, bg_sku_id, property_value_id,property_name_id
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku_property
+    where sku_property_id = #{skuPropertyId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByBgSkuIdValueId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku_property
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and bg_sku_id = #{bgSkuId,jdbcType=INTEGER} and property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getBgGoodsIdBybgSkuId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    SELECT DISTINCT bg_goods_id
+    FROM tb_sku_property
+    WHERE bg_sku_id = #{bgSkuId}
+  </select>
+  
+  <select id="selectByBgGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku_property
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByBgGoodsId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    select distinct bg_sku_id
+    from tb_sku_property
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectBgGoodsIdsByBgSkuId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    SELECT DISTINCT bg_goods_id
+	FROM tb_sku_property
+	WHERE bg_sku_id = #{bgSkuId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_sku_property
+    where sku_property_id = #{skuPropertyId,jdbcType=INTEGER}
+  </delete>
+  
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_sku_property
+    set is_del = 1
+    where sku_property_id = #{skuPropertyId,jdbcType=INTEGER}
+  </delete>
+  -->
+  <insert id="insert" parameterType="SkuProperty" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuPropertyId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_sku_property (bg_goods_id, bg_sku_id, property_value_id,property_name_id
+      )
+    values (#{bgGoodsId,jdbcType=INTEGER},#{bgSkuId,jdbcType=INTEGER}, #{propertyValueId,jdbcType=INTEGER}, #{propertyNameId,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="SkuProperty" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuPropertyId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_sku_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        bg_goods_id,
+      </if>
+      <if test="bgSkuId != null" >
+        bg_sku_id,
+      </if>
+      <if test="propertyValueId != null" >
+        property_value_id,
+      </if>
+      <if test="propertyNameId != null" >
+        property_name_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsId != null" >
+        #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="bgSkuId != null" >
+        #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyValueId != null" >
+        #{propertyValueId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyNameId != null" >
+        #{propertyNameId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="SkuProperty" >
+    update tb_sku_property
+    <set >
+      <if test="bgGoodsId != null" >
+        bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="bgSkuId != null" >
+        bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyValueId != null" >
+        property_value_id = #{propertyValueId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyNameId != null" >
+        property_name_id = #{propertyNameId,jdbcType=INTEGER}
+      </if>
+    </set>
+    where sku_property_id = #{skuPropertyId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="SkuProperty" >
+    update tb_sku_property
+    set bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+    set bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      property_value_id = #{propertyValueId,jdbcType=INTEGER},
+      property_name_id = #{propertyNameId,jdbcType=INTEGER}
+    where sku_property_id = #{skuPropertyId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Banner" >
+  <resultMap id="BaseResultMap" type="Banner" >
+    <id column="banner_id" property="bannerId" jdbcType="INTEGER" />
+    <result column="banner_name" property="bannerName" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="banner_height" property="bannerHeight" jdbcType="INTEGER" />
+    <result column="height_width_ratio" property="heigthWidthRatio" jdbcType="VARCHAR" />
+    <result column="href_url" property="hrefUrl" jdbcType="VARCHAR" />
+    <result column="new_href_url" property="newHrefUrl" jdbcType="VARCHAR" />
+    <result column="banner_position" property="bannerPosition" jdbcType="TINYINT" />
+    <result column="connect_id" property="connectId" jdbcType="INTEGER" />
+    <result column="banner_type" property="bannerType" jdbcType="INTEGER" />
+    <result column="need_login" property="needLogin" jdbcType="INTEGER" />
+    <result column="action_type" property="actionType" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="banner_desc" property="bannerDesc" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    banner_id, banner_name, image_url, href_url,new_href_url, banner_position, connect_id, banner_type, 
+    action_type, need_login, weight, banner_desc, is_del, create_time, update_time, operator, start_time, 
+    end_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_banner
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT DISTINCT b.* 
+	FROM tb_banner b 
+	LEFT JOIN tb_banner_college bc
+	ON b.`banner_id` = bc.`banner_id`
+	LEFT JOIN tb_college c
+	ON bc.`college_id` = c.`college_id`
+	WHERE b.`is_del` = 0
+	<if test="bannerType != null">
+		and b.`banner_type` = #{bannerType,jdbcType=INTEGER}
+	</if>
+	<if test="cityId != null">
+		and bc.is_del = 0 and c.`city_id` = #{cityId,jdbcType=INTEGER}
+	</if>
+	<if test="collegeId != null">
+		and bc.is_del = 0 and bc.`college_id` = #{collegeId,jdbcType=INTEGER}
+	</if>
+	<if test="bannerName != null">
+	    and	b.banner_name like CONCAT('%',#{bannerName},'%')
+	</if>
+	order by b.create_time desc
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_banner
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_banner
+    set is_del = 1
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByConnectHrefUrl" parameterType="java.util.Map" >
+    update tb_banner
+    set is_del = 1
+    WHERE is_del = 0
+    <if test="bannerPosition != -1">
+    	and banner_position = #{bannerPosition,jdbcType=INTEGER}
+    </if>
+    <if test="connectId != -1">
+    	and connect_id = #{connectId,jdbcType=INTEGER}
+    </if>
+    <if test="actionType != -1">
+    	and action_type = #{actionType,jdbcType=INTEGER}
+    </if>
+    <if test="hrefUrl != null">
+    	and href_url = #{hrefUrl,jdbcType=VARCHAR}
+    </if>
+  </delete>
+  
+  <insert id="insert" parameterType="Banner" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bannerId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_banner (banner_name, image_url, banner_height, height_width_ratio,
+      href_url,new_href_url, banner_position, connect_id, 
+      banner_type, action_type,need_login, weight, 
+      banner_desc, is_del, create_time, 
+      update_time, operator, start_time, 
+      end_time)
+    values ( #{bannerName,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{bannerHeight,jdbcType=INTEGER}, #{heigthWidthRatio,jdbcType=VARCHAR}, 
+      #{hrefUrl,jdbcType=VARCHAR},#{newHrefUrl,jdbcType=VARCHAR}, #{bannerPosition,jdbcType=TINYINT}, #{connectId,jdbcType=INTEGER}, 
+      #{bannerType,jdbcType=INTEGER}, #{actionType,jdbcType=INTEGER},#{needLogin,jdbcType=INTEGER}, #{weight,jdbcType=INTEGER}, 
+      #{bannerDesc,jdbcType=VARCHAR}, #{isDel,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="Banner" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bannerId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_banner
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bannerName != null" >
+        banner_name,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="bannerHeight != null" >
+        banner_height,
+      </if>
+      <if test="heigthWidthRatio != null" >
+        height_width_ratio,
+      </if>
+      <if test="hrefUrl != null" >
+        href_url,
+      </if>
+      <if test="newHrefUrl != null" >
+        new_href_url,
+      </if>
+      <if test="bannerPosition != null" >
+        banner_position,
+      </if>
+      <if test="connectId != null" >
+        connect_id,
+      </if>
+      <if test="bannerType != null" >
+        banner_type,
+      </if>
+      <if test="actionType != null" >
+        action_type,
+      </if>
+      <if test="needLogin != null" >
+        need_login,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="bannerDesc != null" >
+        banner_desc,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bannerName != null" >
+        #{bannerName,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bannerHeight != null" >
+        #{banner_height,jdbcType=INTEGER},
+      </if>
+      <if test="heigthWidthRatio != null" >
+        #{heigthWidthRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="hrefUrl != null" >
+        #{hrefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="newHrefUrl != null" >
+        #{newHrefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bannerPosition != null" >
+        #{bannerPosition,jdbcType=TINYINT},
+      </if>
+      <if test="connectId != null" >
+        #{connectId,jdbcType=INTEGER},
+      </if>
+      <if test="bannerType != null" >
+        #{bannerType,jdbcType=INTEGER},
+      </if>
+      <if test="actionType != null" >
+        #{actionType,jdbcType=INTEGER},
+      </if>
+      <if test="needLogin != null" >
+        #{needLogin,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="bannerDesc != null" >
+        #{bannerDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="Banner" >
+    update tb_banner
+    <set >
+      <if test="bannerName != null" >
+        banner_name = #{bannerName,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bannerHeight != null" >
+        banner_height = #{bannerHeight,jdbcType=INTEGER},
+      </if>
+       <if test="heigthWidthRatio != null" >
+        height_width_ratio = #{heigthWidthRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="hrefUrl != null" >
+        href_url = #{hrefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="newHrefUrl != null" >
+        new_href_url = #{newHrefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bannerPosition != null" >
+        banner_position = #{bannerPosition,jdbcType=TINYINT},
+      </if>
+      <if test="connectId != null" >
+        connect_id = #{connectId,jdbcType=INTEGER},
+      </if>
+      <if test="bannerType != null" >
+        banner_type = #{bannerType,jdbcType=INTEGER},
+      </if>
+      <if test="actionType != null" >
+        action_type = #{actionType,jdbcType=INTEGER},
+      </if>
+       <if test="needLogin != null" >
+        need_login = #{needLogin,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="bannerDesc != null" >
+        banner_desc = #{bannerDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = NOW(),
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="Banner" >
+    update tb_banner
+    set banner_name = #{bannerName,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      banner_height = #{bannerHeight,jdbcType=INTEGER},
+      height_width_ratio = #{heigthWidthRatio,jdbcType=VARCHAR},
+      href_url = #{hrefUrl,jdbcType=VARCHAR},
+      new_href_url = #{newHrefUrl,jdbcType=VARCHAR},
+      banner_position = #{bannerPosition,jdbcType=TINYINT},
+      connect_id = #{connectId,jdbcType=INTEGER},
+      banner_type = #{bannerType,jdbcType=INTEGER},
+      action_type = #{actionType,jdbcType=INTEGER},
+      need_login = #{needLogin,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=INTEGER},
+      banner_desc = #{bannerDesc,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=TINYINT},
+      update_time = NOW(),
+      operator = #{operator,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </update>
+</mapper>

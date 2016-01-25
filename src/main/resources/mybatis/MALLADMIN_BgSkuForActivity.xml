@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BgSKuForActivity">
+
+	<!-- 仓库中销售的商品信息 -->
+	<resultMap id="bgSkuForActivityMap" type="bgSkuForActivity">
+		<result property="activityBgSkuId" column="activity_bg_sku_id" />
+		<result property="bgSkuId" column="bg_sku_id" />
+		<result property="activityBgGoodsId" column="activity_bg_goods_id" />
+		<result property="originPrice" column="origin_price" />
+		<result property="activityPrice" column="activity_price" />
+		<result property="stock" column="stock" />
+		<result property="skuType" column="sku_type" />
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="operator" column="operator" />
+		<result property="distributeType" column="distribute_type" />
+		<result property="storageId" column="storage_id" />
+	</resultMap>
+	
+	
+	<resultMap id="bgSkuForActivityWithBgGoodsNameMap" type="bgSkuForActivity">
+		<result property="activityBgSkuId" column="activity_bg_sku_id" />
+		<result property="bgSkuId" column="bg_sku_id" />
+		<result property="activityBgGoodsId" column="activity_bg_goods_id" />
+		<result property="originPrice" column="origin_price" />
+		<result property="activityPrice" column="activity_price" />
+		<result property="stock" column="stock" />
+		<result property="skuType" column="sku_type" />
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="operator" column="operator" />
+		<result property="distributeType" column="distribute_type" />
+		<result property="storageId" column="storage_id" />
+		
+		<result property="bgGoodsName" column="bg_goods_name" />
+		<result property="unit" column="unit" />
+		<result property="describe" column="description" />
+	</resultMap>
+
+	<insert id="insertBgSkuForActivity" parameterType="bgSkuForActivity"  useGeneratedKeys="true" keyProperty="activityBgSkuId">
+		insert into
+		tb_activity_bg_sku(`bg_sku_id`,`activity_bg_goods_id`,`origin_price`,`activity_price`,`stock`,`sku_type`,`image_url`,`create_time`,`update_time`,`operator`,`distribute_type`,`storage_id`)
+		values(#{bgSkuId},#{activityBgGoodsId},#{originPrice},#{activityPrice},#{stock},#{skuType},#{imageUrl,jdbcType=VARCHAR},now(),now(),#{operator},#{distributeType},#{storageId});
+	</insert>
+	<update id="updateBgSkuForActivity" parameterType="hashmap">
+		update tb_activity_bg_sku set origin_price=#{originPrice},activity_price=#{activityPrice},stock=#{stock},update_time=now() where activity_bg_sku_id=#{activityBgSkuId}
+	</update>
+
+	<select id="selectBgSkuForActivity" parameterType="long"
+		resultMap="bgSkuForActivityMap">
+		select * from tb_activity_bg_sku where
+		activity_bg_goods_id=#{activity_bg_goods_id}
+	</select>
+	
+	<select id="selectBgSkuForActivityWithBgGoodsName" parameterType="long" resultMap="bgSkuForActivityWithBgGoodsNameMap">
+		select tabk.*,tbg.bg_goods_name,tbg.unit,tbg.description 
+		from tb_activity_bg_sku tabk,tb_bg_sku tbs,tb_bg_goods tbg 
+		where
+			tabk.bg_sku_id = tbs.bg_sku_id
+		and tbs.bg_goods_id = tbg.bg_goods_id
+		and tabk.activity_bg_goods_id=#{activity_bg_goods_id}
+	</select>
+	
+	<select id="selectByUnionKey" parameterType="hashmap"
+		resultMap="bgSkuForActivityMap">
+		select * from tb_activity_bg_sku 
+		where activity_bg_goods_id = #{activity_bg_goods_id} and bg_sku_id = #{bg_sku_id}
+	</select>
+	
+	<update id="updateIsDel" parameterType="hashmap">
+		update tb_activity_bg_sku 
+		set is_del = #{status}
+        where activity_bg_sku_id=#{activityBgSkuId}
+	</update>
+</mapper>

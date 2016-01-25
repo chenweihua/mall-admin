@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ThirdPartyOrder" >
+  <resultMap id="thirdPartyOrderMap" type="thirdPartyOrder" >
+    <id column="order_id" property="orderId"  jdbcType="BIGINT"/>
+    <result column="order_code" property="orderCode"  jdbcType="VARCHAR"/>
+    <result column="user_id" property="userId" jdbcType="BIGINT"/>
+    <result column="college_id" property="collegeId"  jdbcType="BIGINT"/>
+    <result column="merchant_no" property="merchantNo"   jdbcType="VARCHAR"/>
+    <result column="merchant_name" property="merchantName"   jdbcType="VARCHAR"/>
+    <result column="merchant_type" property="merchantType"   jdbcType="VARCHAR"/>
+    <result column="merchant_area_id" property="merchantAreaId"   jdbcType="VARCHAR"/>
+    <result column="total_pay" property="totalPay"  jdbcType="INTEGER"/>
+    <result column="online_pay" property="onlinePay" jdbcType="INTEGER"/>
+    <result column="online_pay_id" property="onlinePayId"   jdbcType="VARCHAR"/>
+    <result column="online_pay_type" property="onlinePayType" jdbcType="TINYINT"/>
+    <result column="coupon_id" property="couponId" jdbcType="BIGINT"/>
+    <result column="coupon_pay" property="couponPay" jdbcType="INTEGER"/>
+    <result column="first_sub" property="firstSub" jdbcType="INTEGER"/>
+    <result column="full_sub" property="fullSub" jdbcType="INTEGER"/>
+    <result column="status" property="status" jdbcType="TINYINT"/>
+    <result column="device" property="device" jdbcType="TINYINT"/>
+    <result column="create_time" property="createTime"  jdbcType="TIMESTAMP"/>
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    <result column="pay_time" property="payTime"  jdbcType="TIMESTAMP"/>
+  </resultMap>
+  
+   <resultMap id="summayOrderMap" type="summeryOrder" >
+    <id column="summary_id" property="summaryId"  jdbcType="BIGINT"/>
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+    <result column="record_date" property="recordDate"  jdbcType="DATE"/>
+    <result column="sum_total_pay" property="sumTotalPay" jdbcType="BIGINT"/>
+    <result column="sum_online_pay" property="sumOnlinePay"  jdbcType="BIGINT"/>
+    <result column="sum_count" property="sumCount"  jdbcType="INTEGER"/>
+    <result column="merchant_name" property="merchantName"  jdbcType="VARCHAR"/>
+   </resultMap>
+  
+  <!-- 查询订单列表，分页查询-->
+  <select id="selectListByPage" resultMap="thirdPartyOrderMap" parameterType="map" >
+    select o.*,m.merchant_name,m.merchant_type,m.merchant_area_id
+    from tb_thirdparty_order o, tb_merchant m where o.merchant_no=m.merchant_no
+    and o.status in ('5','6','7')
+    <if test="merchantNoList!=null">
+        and o.merchant_no in 
+     <foreach item="merchantNo" collection="merchantNoList" separator="," open="(" close=")" >  
+     	#{merchantNo,jdbcType=VARCHAR} 
+     </foreach>
+    </if>
+	<if test="orderCode!=null">
+		and order_code like concat('%',#{orderCode,jdbcType=VARCHAR},'%')
+	</if>
+     	and o.create_time between #{beginTime ,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+   order by order_id desc
+  </select>
+  
+    <!-- 查询订单列表，导出到文件 -->
+  <select id="selectOrderList" resultMap="thirdPartyOrderMap" parameterType="map" >
+    select o.*,m.merchant_name,merchant_type,m.merchant_area_id
+    from tb_thirdparty_order o, tb_merchant m where o.merchant_no=CONVERT(m.merchant_no using utf8)
+    and o.status in ('5','6','7')
+    <if test="merchantNoList!=null">
+        and o.merchant_no in 
+     <foreach item="item" collection="merchantNoList" separator="," open="(" close=")" index="">  
+     	#{item,jdbcType=VARCHAR} 
+     </foreach>
+    </if>
+	<if test="orderCode!=null">
+		and order_code like concat('%',#{orderCode,jdbcType=VARCHAR},'%')
+	</if>
+     	and o.create_time between #{beginTime ,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+   order by order_id desc
+  </select>
+  
+  <select id="summeryOrder" resultMap="summayOrderMap" parameterType="map" >
+	SELECT
+		m.merchant_no,o.sumtotalpay,o.sumonlinepay,o.sumcount
+	FROM
+		tb_merchant m
+	LEFT JOIN (
+		SELECT
+			merchant_no,
+			sum(total_pay)sumtotalpay,
+			sum(online_pay) sumonlinepay,
+			count(1) sumcount
+		FROM
+			tb_thirdparty_order 
+		where 
+		create_time BETWEEN #{beginTime} and #{endTime}
+		and `status`=5
+		GROUP BY
+			merchant_no
+	) o
+	on m.merchant_no = o.merchant_no
+  </select>
+  <!-- 添加汇总信息 -->
+	<insert id="insertSummaryOrder" parameterType="summeryOrder">
+		insert into tb_merchant_summary_order(merchant_no,record_date,sum_total_pay,sum_online_pay,sum_count) 
+		values(#{merchantNo,jdbcType=VARCHAR},#{recordDate,jdbcType=DATE},#{sumTotalPay,jdbcType=BIGINT},#{sumOnlinePay,jdbcType=BIGINT},#{sumCount,jdbcType=INTEGER});
+	</insert>
+	<!-- 更新汇总信息 -->
+	<update id="updateSummaryOrder" parameterType="summeryOrder">
+		update tb_merchant_summary_order set sum_total_pay=#{sumTotalPay,jdbcType=INTEGER},sum_online_pay=#{sumOnlinePay,jdbcType=INTEGER},sum_count=#{sumCount,jdbcType=INTEGER}
+		where merchant_no=#{merchantNo,jdbcType=VARCHAR} and record_date=#{recordDate,jdbcType=DATE}
+	</update>
+	<!-- 根据商户信息和当前日期查询属于当前商户的汇总信息 -->
+	<select id="selectSummaryOrder" resultMap="summayOrderMap" parameterType="map" >
+		select * from tb_merchant_summary_order where merchant_no=#{merchantNo} and record_date=#{recordDate} 
+	</select>
+	
+		<!-- 根据商户信息和当前日期查询属于当前商户的汇总信息 -->
+	<select id="selectSummaryOrderByPage" resultMap="summayOrderMap" parameterType="map" >
+		select so.*,m.merchant_name
+	    from tb_merchant_summary_order so,tb_merchant m 
+	    where so.merchant_no = CONVERT(m.merchant_no using utf8)
+        <if test="merchantNoList!=null">
+	        and so.merchant_no in 
+		     <foreach item="item" collection="merchantNoList" separator="," open="(" close=")" index="">  
+		     	#{item,jdbcType=VARCHAR} 
+		     </foreach>
+	    </if>
+	    and so.record_date between #{beginDate} and #{endDate} order by summary_id desc
+	</select>
+	
+		<!-- 根据商户信息和当前日期查询属于当前商户的汇总信息 -->
+	<select id="selectAllSummaryOrder" resultMap="summayOrderMap" parameterType="map" >
+		select so.*,m.merchant_name
+	    from tb_merchant_summary_order so,tb_merchant m 
+	    where so.merchant_no = CONVERT(m.merchant_no using utf8)
+        <if test="merchantNoList!=null">
+	        and so.merchant_no in 
+		     <foreach item="item" collection="merchantNoList" separator="," open="(" close=")" index="">  
+		     	#{item,jdbcType=VARCHAR} 
+		     </foreach>
+	    </if>
+	    and so.record_date between #{beginDate} and #{endDate} order by summary_id desc
+	</select>
+	
+	<!-- 查询所有商户的信息（分页） -->
+	<select id="selectSumSummaryOrderByPage" resultMap="summayOrderMap" parameterType="map" >
+		select -1 summary_id,-1 merchant_no, "全部商户" merchant_name,record_date, sum(sum_total_pay) as sum_total_pay ,sum(sum_online_pay) sum_online_pay,sum(sum_count) sum_count
+		 from (select so.*,m.merchant_name
+		    from tb_merchant_summary_order so,tb_merchant m 
+		    where so.merchant_no = CONVERT(m.merchant_no using utf8)
+		    and so.record_date between #{beginDate} and #{endDate} ) total group by record_date order by record_date desc
+	</select>
+	
+	<!-- 查询所有商户的信息 -->
+	<select id="selectSumSummaryOrder" resultMap="summayOrderMap" parameterType="map" >
+		select -1 summary_id,-1 merchant_no, "全部商户" merchant_name,record_date, sum(sum_total_pay) as sum_total_pay ,sum(sum_online_pay) sum_online_pay,sum(sum_count) sum_count
+		 from (select so.*,m.merchant_name
+		    from tb_merchant_summary_order so,tb_merchant m 
+		    where so.merchant_no = CONVERT(m.merchant_no using utf8)
+		    and so.record_date between #{beginDate} and #{endDate}) total group by record_date order by record_date desc
+	</select>
+	
+</mapper>

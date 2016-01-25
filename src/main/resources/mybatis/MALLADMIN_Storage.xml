@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Storage">
+
+	<resultMap id="storageMap" type="storage">
+		<result column="storage_id" property="storageId" jdbcType="INTEGER" />
+		<result column="storage_name" property="storageName" jdbcType="VARCHAR" />
+		<result column="storage_type" property="storageType" jdbcType="TINYINT" />
+		<result column="ldc_type" property="ldcType" jdbcType="TINYINT" />
+		<result column="city_id" property="cityId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime"  />
+		<result column="update_time" property="updateTime" />
+		<result column="operator_id" property="operatorId" jdbcType="INTEGER" />
+		<result column="is_close" property="isClose" jdbcType="TINYINT" />
+		<result column="is_del" property="isDel" jdbcType="TINYINT" />
+		<result column="vm_store_id" property="vmStoreId" jdbcType="INTEGER" />
+  		<result column="vm_college_id" property="vmCollegeId" jdbcType="INTEGER" />
+  		<result column="push_type" property="pushType" jdbcType="INTEGER" />
+  		<result column="freight" property="freight" jdbcType="INTEGER" />
+  		<result column="freight_sub" property="freightSub" jdbcType="INTEGER" />
+  		<result column="freight_type" property="freightType" jdbcType="INTEGER" />
+  		<result column="ldc_owner_type" property="ldcOwnerType" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<!-- @author zhangshuai -->
+	<select id="getListByStorageType" resultMap="storageMap" parameterType="java.lang.Integer">
+		select
+		* from tb_storage
+		where
+		storage_type=#{type} and is_close='0' and is_del='0'
+	</select>
+
+	<!-- @author zhagnshuai -->
+	<select id="getListByStorageTypeAndUserId" parameterType="hashmap"
+		resultMap="storageMap">
+		select
+		s.* from tb_storage s, tb_user_storage us where
+		s.storage_type=#{type} and is_close='0' and s.is_del='0' and us.is_del='0' and
+		s.storage_id=us.storage_id and us.user_id=#{userId}
+	</select>
+	
+	<!-- @author zhangshuai -->
+	<select id="getListByStorageTypeAndCityId" parameterType="hashmap"
+		resultMap="storageMap">
+		select
+		s.* from tb_storage s where
+		s.storage_type=#{type} and s.is_close='0' and
+		s.is_del='0' and s.city_id=#{cityId}
+	</select>
+	
+	
+	<!-- 根据城市id 查询所有RDC仓库 -->
+	<select id="getStoragesByIds" parameterType="hashmap"
+		resultMap="storageMap">
+		select * 
+		from tb_storage
+		where is_del = 0 and is_close='0'
+		AND storage_id IN (${ids})
+		
+	</select>
+
+	<!-- 根据用户id和城市id 查询所有LDC仓库 -->
+	<select id="getLdcStorageByUserIdAndCityId" parameterType="hashmap"
+		resultMap="storageMap">
+		select
+		s.* from tb_storage s, tb_user_storage us where
+		s.storage_type='1' and s.is_close='0' and us.is_del='0' and s.is_del='0' and s.city_id=#{city_id} and
+		s.storage_id=us.storage_id and us.user_id=#{user_id}
+	</select>
+	
+	<!-- @author gaozhou -->
+	<select id="getCount" resultType="java.lang.Long">
+		select count(*) from tb_storage where 1=1
+	</select>
+	
+	<select id="getCountByParams" resultType="java.lang.Long">
+		select count(*) from tb_storage where is_del=0
+		<trim>
+            <if test="storage_id_name !='' and storage_id_name != null">
+                and (storage_name like '%${storage_id_name}%' or storage_id like '%${storage_id_name}%')
+            </if>
+            <if test="storage_type != null and storage_type > -1 ">
+                and storage_type = ${storage_type}
+            </if>
+            <if test="city_id !=null and city_id > 0">
+                and city_id = ${city_id}
+            </if>
+            <if test="is_close >-1  and is_close != null">
+                and is_close = ${is_close}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="getAllStorage" resultMap="storageMap">
+		select * from tb_storage where is_close='0' and is_del='0'
+	</select>
+	
+	<select id="getPageStorageByPage" resultMap="storageMap">
+		select * from tb_storage where is_del=0
+		<trim>
+            <if test="storage_id_name !='' and storage_id_name != null">
+                and (storage_name like '%${storage_id_name}%' or storage_id like '%${storage_id_name}%')
+            </if>
+            <if test="storage_type != null and storage_type > -1">
+                and storage_type = ${storage_type}
+            </if>
+            <if test="city_id !=null and city_id > 0">
+                and city_id = ${city_id}
+            </if>
+            <if test="is_close >-1 and is_close != null">
+                and is_close = ${is_close}
+            </if>
+        </trim>
+        ORDER BY create_time desc
+	</select>
+	
+	
+	<select id="getPageStorageByPageAndUser" resultMap="storageMap">
+		select
+		s.* from tb_storage s, tb_user_storage us where
+		 s.is_del='0'  and
+		s.storage_id=us.storage_id and us.user_id=#{user_id}
+		<trim>
+            <if test="storage_id_name !='' and storage_id_name != null">
+                and (s.storage_name like '%#{storage_id_name}%' or s.storage_id like '%#{storage_id_name}%')
+            </if>
+            <if test="storage_type != null and storage_type > -1">
+                and s.storage_type = #{storage_type}
+            </if>
+            <if test="city_id !=null and city_id > 0">
+                and s.city_id = #{city_id}
+            </if>
+            <if test="is_close >-1 and is_close != null">
+                and s.is_close = #{is_close}
+            </if>
+        </trim>
+        ORDER BY s.create_time desc
+	</select>
+	
+	<select id="getCountByUser" resultType="java.lang.Long">
+		select
+		count(*) from tb_storage s, tb_user_storage us where
+		s.is_del='0'  and
+		s.storage_id=us.storage_id and us.user_id=#{user_id}
+		<trim>
+            <if test="storage_id_name !='' and storage_id_name != null">
+                and (s.storage_name like '%#{storage_id_name}%' or s.storage_id like '%#{storage_id_name}%')
+            </if>
+            <if test="storage_type != null and storage_type > -1">
+                and s.storage_type = #{storage_type}
+            </if>
+            <if test="city_id !=null and city_id > 0">
+                and s.city_id = #{city_id}
+            </if>
+            <if test="is_close >-1 and is_close != null">
+                and s.is_close = #{is_close}
+            </if>
+        </trim>
+	</select>
+	
+	<insert id="addStorage" parameterType="storage" >
+		<selectKey resultType="java.lang.Long" keyProperty="storageId" order="AFTER" >
+    		SELECT LAST_INSERT_ID() 
+  		</selectKey>
+  		insert into tb_storage 
+  		(storage_id,storage_name,storage_type,city_id,operator_id,ldc_type,
+  		is_close,is_del,vm_store_id,vm_college_id,
+  		freight,freight_sub,freight_type,ldc_owner_type) 
+  		values (#{storageId},#{storageName},#{storageType},#{cityId},#{operatorId},#{ldcType},
+  		#{isClose},#{isDel},#{vmStoreId},#{vmCollegeId},
+  		#{freight},#{freightSub},#{freightType},#{ldcOwnerType})
+	</insert>
+
+	 <update id="updateStorage" parameterType="storage">  
+        update tb_storage 
+        set storage_name = #{storageName},
+        city_id = #{cityId},
+        ldc_type = #{ldcType},
+        ldc_owner_type = #{ldcOwnerType},
+        is_close = #{isClose} ,
+        operator_id = #{operatorId},
+        vm_store_id = #{vmStoreId},
+        vm_college_id = #{vmCollegeId},
+        freight = #{freight},
+        freight_sub = #{freightSub},
+        freight_type = #{freightType}
+        where storage_id = #{storageId}  
+    </update> 
+	 
+	 <select id="getStorageById"  parameterType="long" resultMap="storageMap">
+	     select * from tb_storage where storage_id = #{storageId} 
+	 </select>
+	 
+	<update id="deleteStorage" parameterType="java.lang.Long">  
+        update tb_storage set is_del = 1 where storage_id = #{storageId}  
+    </update> 
+
+</mapper>

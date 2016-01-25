@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Notice" >
+
+  <resultMap id="BaseResultMap" type="com.mall.admin.vo.notice.Notice" >
+    
+    <id column="notice_id" jdbcType="BIGINT" property="noticeId" />
+	<result column="notice_id" jdbcType="BIGINT" property="noticeId" />
+	<result column="notice_name" jdbcType="VARCHAR" property="noticeName" />
+	<result column="content" jdbcType="VARCHAR" property="content" />
+	<result column="platform" jdbcType="VARCHAR" property="platform" />
+	<result column="position" jdbcType="TINYINT" property="position" />
+	<result column="html_url" jdbcType="VARCHAR" property="htmlUrl" />
+	<result column="open_type" jdbcType="TINYINT" property="openType" />
+	<result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+	<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+	<result column="status" jdbcType="TINYINT" property="status" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    
+  </resultMap>
+  
+  
+  <resultMap id="noticeCollegeResultMap" type="com.mall.admin.vo.notice.NoticeCollege" >
+    
+    <id column="notice_college_id" jdbcType="BIGINT" property="noticeCollegeId" />
+    <result column="notice_college_id" jdbcType="BIGINT" property="noticeCollegeId" />
+	<result column="notice_id" jdbcType="BIGINT" property="noticeId" />
+	<result column="college_id" jdbcType="BIGINT" property="collegeId" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		notice_id,
+		notice_name,
+		content,
+		platform,
+		position,
+		html_url,
+		open_type,
+		start_time,
+		end_time,
+		status,
+		create_time,
+		update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_notice
+    where notice_id = #{noticeId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="select" parameterType="com.mall.admin.vo.notice.Notice" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_notice
+    where 1=1 
+		<if test="noticeId != null">
+			and notice_id = #{noticeId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="noticeName != null">
+			and notice_name = #{noticeName,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="content != null">
+			and content = #{content,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="platform != null">
+			and platform = #{platform,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="position != null">
+			and position = #{position,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="htmlUrl != null">
+			and html_url = #{htmlUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="openType != null">
+			and open_type = #{openType,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="startTime != null">
+			and start_time = #{startTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="endTime != null">
+			and end_time = #{endTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="status != null">
+			and status = #{status,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="updateTime != null">
+			and update_time = #{updateTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_notice
+    where notice_id = #{noticeId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.mall.admin.vo.notice.Notice">
+    insert into tb_notice
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="noticeId != null">
+        notice_id,
+      </if>
+      <if test="noticeName != null">
+        notice_name,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="platform != null">
+        platform,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="htmlUrl != null">
+        html_url,
+      </if>
+      <if test="openType != null">
+        open_type,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="noticeId != null">
+        #{noticeId,jdbcType=BIGINT},
+      </if>
+      <if test="noticeName != null">
+        #{noticeName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        #{platform,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=TINYINT},
+      </if>
+      <if test="htmlUrl != null">
+        #{htmlUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="openType != null">
+        #{openType,jdbcType=TINYINT},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.mall.admin.vo.notice.Notice">
+    
+    update tb_notice
+    <set>
+			<if test="noticeName != null">
+				notice_name = #{noticeName,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="platform != null">
+				platform = #{platform,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				position = #{position,jdbcType=TINYINT},
+			</if>
+			<if test="htmlUrl != null">
+				html_url = #{htmlUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="openType != null">
+				open_type = #{openType,jdbcType=TINYINT},
+			</if>
+			<if test="openType == 2">
+				<if test="startTime != null">
+				start_time = #{startTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="endTime != null">
+				end_time = #{endTime,jdbcType=TIMESTAMP},
+				</if>
+			</if>
+			<if test="openType != 2">
+				start_time = null,
+				end_time = null,
+			</if>
+			<if test="openType == 1">
+				<if test="status != null">
+					status = #{status,jdbcType=TINYINT},
+				</if>
+			</if>
+			<if test="openType != 1">
+				status = null,
+			</if>
+
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+    </set>
+    where notice_id = #{noticeId,jdbcType=BIGINT}
+  </update>
+ 
+  <select id="getPageNoticeByPage" resultMap="BaseResultMap">
+		select distinct tn.* from tb_notice tn
+		left join tb_notice_college tnc on tn.notice_id = tnc.notice_id
+		left join tb_college tc on tnc.college_id = tc.college_id
+		where 1=1
+		<if test="state == 1">
+			<![CDATA[ 
+			and  (
+					(tn.open_type = 1 and tn.status = 1)
+			     or
+			     	(tn.open_type = 2 and tn.start_time < now() and tn.end_time > now())
+			     )
+			]]>
+		</if>
+		<if test="state == 0">
+			<![CDATA[ 
+			and (
+					(tn.open_type = 1 and tn.status = 0)
+			     or
+			    	(tn.open_type = 2 and (tn.start_time > now() or tn.end_time < now()))
+			)
+			]]>
+		</if>
+		<if test="noticeName != null and '' != noticeName">
+			and tn.notice_name like CONCAT('%',#{noticeName},'%' ) 
+		</if>
+		<if test="platform != null and '' != platform">
+			and	tn.platform = #{platform,jdbcType=VARCHAR}
+		</if>
+		<if test="status != null">
+		 	and tn.status = #{status,jdbcType=TINYINT}
+		</if>
+		<if test="cityId != null">
+		 	and tc.city_id = #{cityId,jdbcType=BIGINT}
+		</if>
+		<if test="collegeId != null">
+		 	and tc.college_id = #{collegeId,jdbcType=BIGINT}
+		</if>
+		order by create_time desc
+	</select>
+  
+  
+  <select id="getNoticeCollegeByNoticeId" resultMap="noticeCollegeResultMap">
+  		select * from tb_notice_college where notice_id = #{noticeId,jdbcType=BIGINT}
+  </select>
+  
+  
+  <insert id="insertNoticeColleges" parameterType="java.util.Map">
+  	insert into tb_notice_college(notice_college_id,notice_id,college_id,create_time) values
+  	<foreach item="noticeCollege" collection="noticeColleges" open="" separator="," close=""> 
+          (#{noticeCollege.noticeCollegeId},#{noticeCollege.noticeId},#{noticeCollege.collegeId},now())
+    </foreach> 
+  
+  </insert>
+  
+  <delete id="delNoticeCollegeByNoticeId" parameterType="java.lang.Long">
+    delete from tb_notice_college
+    where notice_id = #{noticeId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="getNoticeByCollege" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		select tn.* from tb_notice_college tnc,tb_notice tn
+  		where 
+  			tnc.notice_id = tn.notice_id
+  		and tnc.college_id = #{value}
+  </select>
+  
+   <insert id="insertNoticeOperationLog" parameterType="com.mall.admin.vo.notice.NoticeOperationLog">
+    insert into tb_notice_operation_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="noticeOperationLogId != null">
+        notice_operation_log_id,
+      </if>
+      <if test="noticeId != null">
+        notice_id,
+      </if>
+      <if test="noticeName != null">
+        notice_name,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="platform != null">
+        platform,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="htmlUrl != null">
+        html_url,
+      </if>
+      <if test="openType != null">
+        open_type,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="operationTime != null">
+        operation_time,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+      <if test="collegeId != null">
+        collegeId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="noticeOperationLogId != null">
+        #{noticeOperationLogId,jdbcType=BIGINT},
+      </if>
+      <if test="noticeId != null">
+        #{noticeId,jdbcType=BIGINT},
+      </if>
+      <if test="noticeName != null">
+        #{noticeName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        #{platform,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=TINYINT},
+      </if>
+      <if test="htmlUrl != null">
+        #{htmlUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="openType != null">
+        #{openType,jdbcType=TINYINT},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="operationTime != null">
+        #{operationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+</mapper>

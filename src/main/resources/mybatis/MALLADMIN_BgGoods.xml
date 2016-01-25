@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BgGoods" >
+
+  <resultMap id="BaseResultMap" type="BgGoods" >
+    <id column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="bg_goods_name" property="bgGoodsName" jdbcType="VARCHAR" />
+    <result column="bg_goods_subname" property="bgGoodsSubname" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="property_category_id" property="propertyCategoryId" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="max_num" property="maxNum" jdbcType="INTEGER" />
+    <result column="goods_type" property="goodsType" jdbcType="TINYINT" />
+    <result column="goods_status" property="goodsStatus" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="sale_spec" property="saleSpec" jdbcType="VARCHAR" />
+    <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+    <result column="package_spec" property="packageSpec" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="shelf_life" property="shelfLife" jdbcType="VARCHAR" />
+    <result column="storage_id" property="storageId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="ResultMap4Manager" type="BgGoods4Manager" >
+    <id column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="bg_goods_name" property="bgGoodsName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="property_category_id" property="propertyCategoryId" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="goods_type" property="goodsType" jdbcType="TINYINT" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="wms_goods_gbms" property="wmsGoodsGbm" jdbcType="VARCHAR" />
+    <result column="goods_status" property="bgGoodsStatus" jdbcType="TINYINT" />
+    <result column="storage_id" property="storageId" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    bg_goods_id, bg_goods_name, bg_goods_subname, description, remark, category_id,property_category_id, unit, 
+    image_url, weight, max_num, goods_type, goods_status, is_del, create_time, update_time, 
+    operator,sale_spec,origin_place,package_spec,brand,shelf_life,storage_id 
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bg_goods
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectSingByBgSkuId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    bg.*
+    from tb_bg_goods bg, tb_bg_sku bs
+    where bg.is_del = 0 and bs.is_del = 0 and bg.bg_goods_id = bs.bg_goods_id and bs.bg_sku_id = #{bgSkuId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectSingleByPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT g.*
+	FROM tb_bg_goods g 
+	LEFT JOIN tb_bg_sku s
+	ON  g.is_del = 0 AND (g.goods_type = 1 OR g.goods_type = 2)
+	 	AND g.`bg_goods_id` = s.`bg_goods_id`
+	WHERE s.is_del = 0
+	<if test="bgGoodsName != null and '' != bgGoodsName" >
+       and (g.`bg_goods_name` LIKE  CONCAT('%',#{bgGoodsName},'%') OR s.`wms_goods_gbms` LIKE CONCAT('%',#{wmsGoodsGbm},'%'))
+    </if>
+    order by g.bg_goods_id desc
+  </select>
+  
+  <select id="selectByCodeOrNameByPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT * FROM (
+    (SELECT	bg.*
+		FROM tb_bg_goods bg, tb_bg_sku bs
+		WHERE bg.bg_goods_id=bs.bg_goods_id
+		<if test="bgGoodsName1 != null and '' != bgGoodsName1" >
+			and (bs.wms_goods_gbms LIKE CONCAT('%',#{wmsGoodsGbm1},'%') OR bg.bg_goods_name LIKE CONCAT('%',#{bgGoodsName1},'%'))
+		</if>
+		)
+	UNION
+	(SELECT distinct bg.*
+	    FROM
+		tb_bg_goods bg,
+		tb_sku_property sp,
+		tb_bg_sku bs
+		WHERE bg.bg_goods_id=sp.bg_goods_id
+		AND bs.bg_sku_id=sp.bg_sku_id
+		<if test="bgGoodsName2 != null and '' != bgGoodsName2" >
+			AND (bs.wms_goods_gbms LIKE CONCAT('%',#{wmsGoodsGbm2},'%') OR bg.bg_goods_name LIKE CONCAT('%',#{bgGoodsName2},'%'))
+		</if>
+		)) s order by bg_goods_id desc
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_bg_goods
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insert" parameterType="BgGoods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bgGoodsId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_goods (bg_goods_name, bg_goods_subname, 
+      description, remark, category_id, property_category_id,
+      unit, image_url, weight, 
+      max_num, goods_type, goods_status, 
+      is_del, create_time, update_time, 
+      operator,sale_spec,origin_place,
+      package_spec, brand, shelf_life,storage_id)
+    values (#{bgGoodsName,jdbcType=VARCHAR}, #{bgGoodsSubname,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, #{propertyCategoryId,jdbcType=INTEGER}, 
+      #{unit,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, 
+      #{maxNum,jdbcType=INTEGER}, #{goodsType,jdbcType=TINYINT}, #{goodsStatus,jdbcType=TINYINT}, 
+      0, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{operator,jdbcType=INTEGER}, #{saleSpec,jdbcType=VARCHAR}, #{originPlace,jdbcType=VARCHAR},
+      #{packageSpec,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, #{shelfLife,jdbcType=VARCHAR},#{storageId,jdbcType=INTEGER})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="BgGoods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bgGoodsId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_bg_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsName != null" >
+        bg_goods_name,
+      </if>
+      <if test="bgGoodsSubname != null" >
+        bg_goods_subname,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="propertyCategoryId != null" >
+        property_category_id,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="maxNum != null" >
+        max_num,
+      </if>
+      <if test="goodsType != null" >
+        goods_type,
+      </if>
+      <if test="goodsStatus != null" >
+        goods_status,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="saleSpec != null" >
+        sale_spec,
+      </if>
+      <if test="originPlace != null" >
+        origin_place,
+      </if>
+      <if test="packageSpec != null" >
+      	package_spec,
+      </if>
+      <if test="brand != null" >
+     	 brand,
+      </if>
+      <if test="shelfLife != null" >
+     	 shelf_life,
+      </if>
+      <if test="storageId != null" >
+        storage_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgGoodsName != null" >
+        #{bgGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="bgGoodsSubname != null" >
+        #{bgGoodsSubname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyCategoryId != null" >
+        #{propertyCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=TINYINT},
+      </if>
+      <if test="goodsStatus != null" >
+        #{goodsStatus,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="saleSpec != null" >
+        #{saleSpec,jdbcType=VARCHAR},
+      </if>
+       <if test="originPlace != null" >
+        #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="packageSpec != null" >
+      	#{packageSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+     	 #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="shelfLife != null" >
+     	 #{shelfLife,jdbcType=VARCHAR},
+      </if>
+      <if test="storageId != null" >
+        #{storageId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+
+  <update id="updateByPrimaryKeySelective" parameterType="BgGoods" >
+    update tb_bg_goods
+    <set >
+      <if test="bgGoodsName != null" >
+        bg_goods_name = #{bgGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="bgGoodsSubname != null" >
+        bg_goods_subname = #{bgGoodsSubname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyCategoryId != null" >
+        property_category_id = #{propertyCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        max_num = #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        goods_type = #{goodsType,jdbcType=TINYINT},
+      </if>
+      <if test="goodsStatus != null" >
+        goods_status = #{goodsStatus,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = NOW(),
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="saleSpec != null" >
+        sale_spec = #{saleSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="originPlace != null" >
+        origin_place = #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="packageSpec != null" >
+        package_spec = #{packageSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="shelfLife != null" >
+        shelf_life = #{shelfLife,jdbcType=VARCHAR},
+      </if>
+      <if test="storageId != null" >
+        storage_id = #{storageId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="BgGoods" >
+    update tb_bg_goods
+    set bg_goods_name = #{bgGoodsName,jdbcType=VARCHAR},
+      bg_goods_subname = #{bgGoodsSubname,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      property_category_id = #{propertyCategoryId,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      max_num = #{maxNum,jdbcType=INTEGER},
+      goods_type = #{goodsType,jdbcType=TINYINT},
+      goods_status = #{goodsStatus,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT},
+      update_time = NOW(),
+      operator = #{operator,jdbcType=INTEGER},
+      sale_spec = #{saleSpec,jdbcType=VARCHAR},
+      origin_place = #{originPlace,jdbcType=VARCHAR},
+      package_spec = #{packageSpec,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      shelf_life = #{shelfLife,jdbcType=VARCHAR}, 
+      storage_id = #{storageId,jdbcType=INTEGER}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateUpdateTimeByBgGoodsId" parameterType="java.lang.Long" >
+    update tb_bg_goods
+    set update_time = NOW()
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateStatusByBgGoodsId" parameterType="hashmap" >
+  	UPDATE tb_bg_goods bg,tb_bg_sku bs
+	SET bg.`goods_status` = #{goodsStatus},bs.`sku_status` = #{goodsStatus},bg.`update_time` = NOW(),bs.`update_time` = NOW()
+	WHERE bg.`bg_goods_id` = bs.`bg_goods_id` AND bg.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getBgGoodsInfoByPage" parameterType="hashmap"
+		resultMap="ResultMap4Manager">
+		SELECT bg.bg_goods_id,bg.bg_goods_name,
+		bg.description,bg.remark,bg.goods_type,bg.image_url,bg.unit,bg.category_id,
+		'' as category_name 
+		FROM tb_bg_goods bg left join tb_bg_sku bs
+		on bg.`bg_goods_id` = bs.`bg_goods_id`
+		WHERE bg.`is_del` = 0
+		<if test="category_id != null ">
+			and bg.category_id = #{category_id}
+		</if>
+		<if test="goods_name !='' and goods_name != null">
+			and (bg.`bg_goods_name` like CONCAT('%',#{goods_name},'%') or bs.`wms_goods_gbms` LIKE CONCAT('%',#{goods_name},'%'))
+		</if>
+		order by bg.update_time desc
+  </select>
+	
+  <!-- 获得商品信息 -->
+	<select id="getStorageGoodsInfoByPage" parameterType="hashmap"
+		resultMap="ResultMap4Manager">
+		SELECT DISTINCT g.bg_goods_id,g.bg_goods_name,
+		g.goods_desc as description,g.remark,g.goods_type,g.image_url,g.unit,g.category_id,
+		'' as category_name 
+		FROM tb_goods g
+		LEFT JOIN tb_college c
+		ON g.`college_id` = c.`college_id`
+		WHERE 1 = 1 
+		<if test="isLdc == null and storage_id !='' and storage_id != null">
+			and (c.`rdc_storage_id`=#{storage_id} or c.`ldc_storage_id`=#{storage_id})
+		</if>
+		<if test="isLdc == 0 and storage_id !='' and storage_id != null">
+			and c.`rdc_storage_id`=#{storage_id}
+		</if>
+		<if test="isLdc == 1 and storage_id !='' and storage_id != null">
+			and c.`ldc_storage_id`=#{storage_id}
+		</if>
+		<if test="(isLdc == 0 or isLdc == 1) and (storage_id =='' or storage_id == null)">
+			and g.`storage_id` = 0
+		</if>
+		<if test="category_id != null ">
+			and g.category_id = #{category_id}
+		</if>
+		<if test="collegeId != null ">
+			and g.college_id = #{collegeId}
+		</if>
+		<if test="goods_name !='' and goods_name != null">
+			and g.bg_goods_name like CONCAT('%',#{goods_name},'%' )
+		</if>
+		order by g.goods_id desc
+	</select>
+	
+	<select id="getGoodsInfo4VmStorageByPage" parameterType="hashmap"
+		resultMap="ResultMap4Manager">
+		SELECT DISTINCT g.bg_goods_id,g.bg_goods_name,
+		g.goods_desc as description,g.remark,g.goods_type,g.image_url,g.unit,g.category_id,
+		'' as category_name 
+		FROM tb_goods g
+		WHERE 1=1
+		<if test="storage_id !='' and storage_id != null">
+			and g.storage_id = #{storage_id}
+		</if>
+		<if test="storage_id =='' or storage_id == null">
+			and g.storage_id > 0
+		</if>
+		<if test="category_id != null ">
+			and g.category_id = #{category_id}
+		</if>
+		<if test="collegeId != null ">
+			and g.college_id = #{collegeId}
+		</if>
+		<if test="goods_name !='' and goods_name != null">
+			and g.bg_goods_name like CONCAT('%',#{goods_name},'%' )
+		</if>
+		order by g.goods_id desc
+	</select>
+	
+	<select  id="selectSingleGoodsByWmsGoodsId"  parameterType="java.lang.Long"  resultMap="BaseResultMap">
+		SELECT
+			bg.*
+		FROM
+			tb_bg_goods bg,
+			tb_bg_sku bs,
+			tb_bg_sku_gbm bsg
+		WHERE
+			bg.bg_goods_id = bs.bg_goods_id
+		AND bs.bg_sku_id = bsg.bg_sku_id
+		AND bsg.wms_goods_id =#{wmsGoodsId};
+	</select>
+	
+	<select  id="selectMultGoodsByWmsGoodsId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT
+			bg.*
+		FROM
+			tb_bg_goods bg,
+			tb_sku_property sp,
+			tb_bg_sku_gbm bsg
+		WHERE
+			bg.bg_goods_id = sp.bg_goods_id
+		AND sp.bg_sku_id = bsg.bg_sku_id
+		AND bsg.wms_goods_id =#{wmsGoodsId};
+	</select>
+	
+	<select id="selectBgGoodsDtoListByPage" parameterType="hashmap"
+		resultMap="ResultMap4Manager">
+		SELECT bg.bg_goods_id,bg.bg_goods_name,
+		bg.description,bg.remark,bg.goods_type,bg.image_url,bg.unit,bg.category_id,bg.property_category_id,bg.goods_status,bs.wms_goods_gbms,bg.storage_id
+		FROM tb_bg_goods bg left join tb_bg_sku bs
+		on bg.`bg_goods_id` = bs.`bg_goods_id`
+		WHERE bg.`is_del` = 0
+		<if test="bgGoodsStatus != null ">
+			and bg.goods_status = #{bgGoodsStatus}
+		</if>
+		<if test="categoryId != null ">
+			and bg.category_id = #{categoryId}
+		</if>
+		<if test="storageId != null ">
+			and bg.storage_id = #{storageId}
+		</if>
+		<if test="storageIdList != null ">
+			and bg.storage_id in
+			<foreach collection="storageIdList" open="(" separator="," close=")" item="storageId">
+				#{storageId, jdbcType=NUMERIC}  
+			</foreach>
+		</if>
+		<if test="bgGoodsName !='' and bgGoodsName != null">
+			and (bg.`bg_goods_name` like CONCAT('%',#{bgGoodsName},'%') or bs.`wms_goods_gbms` LIKE CONCAT('%',#{bgGoodsName},'%'))
+		</if>
+		group by bg.bg_goods_id
+		order by bg.update_time desc
+	</select>
+	
+</mapper>

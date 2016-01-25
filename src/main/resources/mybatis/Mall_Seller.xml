@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 CST 2013-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Seller">	
+	<resultMap id="sellerMap" type="seller">
+		<result property="sellerId" column="seller_id"/>
+		<result property="sellerName" column="seller_name"/>
+		<result property="createTime" javaType="java.sql.Timestamp" column="create_time"/>
+		<result property="updateTime" javaType="java.sql.Timestamp" column="update_time"/>
+		<result property="operator" column="operator"/>
+		<result property="isDel" column="is_del"/>	
+	</resultMap>
+
+	<select id="getCount" resultType="java.lang.Long">
+		select count(*) from tb_seller
+	</select>
+	
+	<select id="getCountByParams" resultType="java.lang.Long">
+		select count(*) from tb_seller where is_del = 0
+		<trim>
+            <if test="seller_id_like !='' and seller_id_like!=null">
+                and (seller_name like '%${seller_name_like}%' or seller_id like '%${seller_id_like}%')
+            </if>
+        </trim>
+	</select>
+	
+	<select id="getAllSeller" resultMap="sellerMap">
+		select * from tb_seller
+	</select>
+	
+	<select id="getPageSellerByPage" resultMap="sellerMap">
+		select * from tb_seller  where is_del = 0
+		<trim>
+            <if test="seller_id_like !='' and seller_id_like!=null">
+                and (seller_name like '%${seller_name_like}%' or seller_id like '%${seller_id_like}%')
+            </if>
+        </trim>
+        ORDER BY create_time desc
+	</select>
+	
+	<insert id="addSeller" parameterType="com.mall.admin.vo.seller.Seller" >
+  		insert into tb_seller (seller_id,seller_name) values (#{sellerId},#{sellerName})
+		<selectKey resultType="java.lang.Long" keyProperty="sellerId" order="AFTER" >
+    		SELECT LAST_INSERT_ID() AS sellerId
+  		</selectKey>
+	</insert>
+	
+	<update id="updateSeller" parameterType="com.mall.admin.vo.seller.Seller">  
+        update tb_seller set seller_name = #{sellerName} where seller_id = #{sellerId}  
+    </update> 
+    
+    <select id="getSellerById" parameterType="java.lang.Long" resultMap="sellerMap">
+    	select * from tb_seller where seller_id=#{sellerId}
+    </select>
+    
+    <update id="deleteSeller" parameterType="java.lang.Long">  
+        update tb_seller set is_del = 1 where seller_id = #{sellerId}  
+    </update> 
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ThirdCategory">
+
+	<resultMap id="thirdCategoryMap" type="thirdCategory">
+		<result property="propertyCategoryId" column="property_category_id" />
+		<result property="propertyCategoryName" column="property_category_name" />
+		<result property="level" column="level" />
+		<result property="pid" column="pid" />
+		<result property="weight" column="weight" />
+		<result property="isDel" column="is_del" />
+		<result property="createTime" jdbcType="TIMESTAMP" column="create_time" />
+		<result property="updateTime" jdbcType="TIMESTAMP" column="update_time" />
+		<result property="operator" column="operator" />
+		<result property="creator" column="creator" />
+		<result property="modifyUser" column="modify_user" />
+	</resultMap>
+	
+	<select id="getSkuPropertyBySkuIdAndBgGoodsId" resultType="java.lang.String" parameterType="java.lang.Long">
+		SELECT pv.property_value from tb_sku_property sp, tb_property_value pv 
+		WHERE sp.property_value_id = pv.property_value_id AND sp.bg_sku_id = #{bgSkuId} AND pv.is_del = 0
+	</select>
+
+	<select id="getPageCategoryByPage" resultMap="thirdCategoryMap">
+		select * from tb_property_category where is_del=0   
+		<if test="propertyCategoryName != null and '' != propertyCategoryName">
+			and property_category_name like concat('%',#{propertyCategoryName},'%') 
+		</if>
+		<if test="level != null and '' != level">
+			and level = #{level}  
+		</if>
+		<if test="pid != null and '' != pid">
+			and pid = #{pid}  
+		</if>
+		
+		order by create_time desc
+	</select>
+
+	<select id="getCategoryById" parameterType="long" resultMap="thirdCategoryMap">
+		select * from tb_property_category where is_del=0 and property_category_id=#{propertyCategoryId} 
+	</select>
+
+	<insert id="addCategory" parameterType="ThirdCategory">
+		<selectKey resultType="java.lang.Long" keyProperty="propertyCategoryId" order="AFTER" >
+    		SELECT LAST_INSERT_ID() AS propertyCategoryId
+  		</selectKey>
+		insert into
+		tb_property_category(property_category_name, level, pid,
+		weight, is_del, create_time, update_time,operator, creator, modify_user)
+		values(#{propertyCategoryName},#{level},#{pid},#{weight},#{isDel},now(),now(),#{operator}, #{creator},#{modifyUser});
+	</insert>
+
+	<!-- 软删除， 设置isdel=1 -->
+	<update id="deleteCategory" parameterType="map">
+		update tb_property_category set
+		is_del=1 , update_time = now(), operator = #{operator}, modify_user = #{modifyUser}  
+		where
+		property_category_id=#{propertyCategoryId}
+	</update>
+
+
+	<update id="updateCategory" parameterType="ThirdCategory">
+		update tb_property_category set
+		property_category_name=#{propertyCategoryName}, level=#{level},pid=#{pid},
+		weight=#{weight}, is_del=#{isDel}, update_time=now(), operator=#{operator}, modify_user = #{modifyUser} 
+		where
+		property_category_id=#{propertyCategoryId}
+	</update>
+
+</mapper>

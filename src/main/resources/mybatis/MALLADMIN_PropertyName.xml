@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PropertyName" >
+  <resultMap id="BaseResultMap" type="PropertyName" >
+    <id column="property_name_id" property="propertyNameId" jdbcType="INTEGER" />
+    <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+    <result column="property_category_id" property="propertyCategoryId" jdbcType="INTEGER" />
+    <result column="show_order" property="showOrder" jdbcType="INTEGER" />
+    <result column="need_pic" property="needPic" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <resultMap id="PropertyDtoMap" type="PropertyDto" >
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="bg_sku_id" property="bgSkuId" jdbcType="INTEGER" />
+    <result column="property_name_id" property="propertyNameId" jdbcType="INTEGER" />
+    <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+	<result column="property_value_id" property="propertyValueId" jdbcType="INTEGER" />
+    <result column="property_value" property="propertyValue" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    property_name_id, property_name, property_category_id, show_order, need_pic, is_del
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_property_name
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectListByCategoryId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_property_name
+    where property_category_id = #{propertyCategoryId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  
+  <select id="selectPropertyDtosByBgGoodsId" resultMap="PropertyDtoMap" parameterType="java.lang.Long" >
+    SELECT DISTINCT gp.`bg_goods_id`,sp.`bg_sku_id`,pn.`property_name_id`,pn.`property_name`,pv.`property_value_id`,pv.`property_value` 
+    FROM tb_property_name pn,tb_property_value pv,tb_goods_property gp,tb_sku_property sp
+    WHERE pn.`is_del` = 0 AND gp.`is_del` = 0 AND pv.`is_del` = 0 AND pv.`property_name_id` = pn.`property_name_id` AND gp.`property_value_id` = pv.`property_value_id` AND sp.`property_value_id` = pv.`property_value_id`
+         AND sp.`bg_goods_id` = gp.`bg_goods_id` AND sp.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER} 
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_property_name
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_property_name
+    set is_del = 1
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="PropertyName" >
+    <selectKey resultType="java.lang.Integer" keyProperty="propertyNameId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_property_name (property_name, property_category_id, 
+      show_order, need_pic, is_del
+      )
+    values (#{propertyName,jdbcType=VARCHAR}, #{propertyCategoryId,jdbcType=INTEGER}, 
+      #{showOrder,jdbcType=INTEGER}, #{needPic,jdbcType=TINYINT}, #{isDel,jdbcType=TINYINT}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="PropertyName" >
+    <selectKey resultType="java.lang.Integer" keyProperty="propertyNameId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_property_name
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        property_name,
+      </if>
+      <if test="propertyCategoryId != null" >
+        property_category_id,
+      </if>
+      <if test="showOrder != null" >
+        show_order,
+      </if>
+      <if test="needPic != null" >
+        need_pic,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyCategoryId != null" >
+        #{propertyCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="showOrder != null" >
+        #{showOrder,jdbcType=INTEGER},
+      </if>
+      <if test="needPic != null" >
+        #{needPic,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="PropertyName" >
+    update tb_property_name
+    <set >
+      <if test="propertyName != null" >
+        property_name = #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyCategoryId != null" >
+        property_category_id = #{propertyCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="showOrder != null" >
+        show_order = #{showOrder,jdbcType=INTEGER},
+      </if>
+      <if test="needPic != null" >
+        need_pic = #{needPic,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="PropertyName" >
+    update tb_property_name
+    set property_name = #{propertyName,jdbcType=VARCHAR},
+      property_category_id = #{propertyCategoryId,jdbcType=INTEGER},
+      show_order = #{showOrder,jdbcType=INTEGER},
+      need_pic = #{needPic,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectPnListByBgGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT pn.* 
+	FROM tb_goods_property gp 
+	LEFT JOIN tb_property_value pv
+	ON gp.`property_value_id` = pv.`property_value_id` 
+	LEFT JOIN tb_property_name pn
+	ON pv.`property_name_id` = pn.`property_name_id`
+	WHERE gp.is_del = 0 AND gp.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER}
+	GROUP BY pn.`property_name_id`
+  </select>
+  
+</mapper>

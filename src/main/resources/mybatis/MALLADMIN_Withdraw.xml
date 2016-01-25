@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Withdraw" >
+  <resultMap id="BaseResultMap" type="com.mall.admin.vo.order.Withdraw" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <!-- 子订单ID -->
+    <result column="order_id" property="orderId" jdbcType="BIGINT" />
+    <result column="order_detail_id" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
+    <result column="sku_unit_price" property="skuUnitPrice" jdbcType="INTEGER" />
+    <result column="sku_buy_num" property="skuBuyNum" jdbcType="INTEGER" />
+    <result column="sku_withdraw_num" property="skuWithdrawNum" jdbcType="INTEGER" />
+    <result column="order_create_time" property="orderCreateTime" jdbcType="TIMESTAMP" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="orderTotalPay" property="ordertotalpay" jdbcType="INTEGER" />
+    <result column="collegeName" property="collegename" jdbcType="VARCHAR" />
+    <result column="receiverName" property="receivername" jdbcType="VARCHAR" />
+    <result column="receiverPhone" property="receiverphone" jdbcType="VARCHAR" />
+    <result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+    <result column="firstSub" property="firstsub" jdbcType="INTEGER" />
+    <result column="fullSub" property="fullsub" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="operator" property="operator" jdbcType="BIGINT" />
+    <result column="onlinePay" property="onlinepay" jdbcType="INTEGER" />
+    <result column="onlinePayType" property="onlinepaytype" jdbcType="INTEGER" />
+    <result column="coupon" property="coupon" jdbcType="INTEGER" />
+    <result column="operatoruser" property="operatoruser" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    id, user_id, order_id, order_detail_id, sku_id, sku_name, sku_unit_price, sku_buy_num, 
+    sku_withdraw_num, order_create_time, reason, orderTotalPay, collegeName, receiverName, 
+    receiverPhone, transaction_id, firstSub, fullSub, createTime, updateTime, operator, 
+    onlinePay, onlinePayType, coupon, operatoruser
+  </sql>
+ 
+  <select id="countByChildOrderId" resultType="java.lang.Long" parameterType="java.lang.Long">
+	 select count(1)
+	 from tb_withdraw
+	 where order_id = #{childOrderId}
+  </select>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_withdraw
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_withdraw
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+ 
+  <insert id="insert" parameterType="com.mall.admin.vo.order.Withdraw" >
+    insert into tb_withdraw (id, user_id, order_id, 
+      order_detail_id, sku_id, sku_name, 
+      sku_unit_price, sku_buy_num, sku_withdraw_num, 
+      order_create_time, reason, orderTotalPay, 
+      collegeName, receiverName, receiverPhone, 
+      transaction_id, firstSub, fullSub, 
+      createTime, updateTime, operator, 
+      onlinePay, onlinePayType, coupon, 
+      operatoruser)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, 
+      #{orderDetailId,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, #{skuName,jdbcType=VARCHAR}, 
+      #{skuUnitPrice,jdbcType=INTEGER}, #{skuBuyNum,jdbcType=INTEGER}, #{skuWithdrawNum,jdbcType=INTEGER}, 
+      #{orderCreateTime,jdbcType=TIMESTAMP}, #{reason,jdbcType=VARCHAR}, #{ordertotalpay,jdbcType=INTEGER}, 
+      #{collegename,jdbcType=VARCHAR}, #{receivername,jdbcType=VARCHAR}, #{receiverphone,jdbcType=VARCHAR}, 
+      #{transactionId,jdbcType=VARCHAR}, #{firstsub,jdbcType=INTEGER}, #{fullsub,jdbcType=INTEGER}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{operator,jdbcType=BIGINT}, 
+      #{onlinepay,jdbcType=INTEGER}, #{onlinepaytype,jdbcType=INTEGER}, #{coupon,jdbcType=INTEGER}, 
+      #{operatoruser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall.admin.vo.order.Withdraw" >
+    insert into tb_withdraw
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="orderDetailId != null" >
+        order_detail_id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="skuName != null" >
+        sku_name,
+      </if>
+      <if test="skuUnitPrice != null" >
+        sku_unit_price,
+      </if>
+      <if test="skuBuyNum != null" >
+        sku_buy_num,
+      </if>
+      <if test="skuWithdrawNum != null" >
+        sku_withdraw_num,
+      </if>
+      <if test="orderCreateTime != null" >
+        order_create_time,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="ordertotalpay != null" >
+        orderTotalPay,
+      </if>
+      <if test="collegename != null" >
+        collegeName,
+      </if>
+      <if test="receivername != null" >
+        receiverName,
+      </if>
+      <if test="receiverphone != null" >
+        receiverPhone,
+      </if>
+      <if test="transactionId != null" >
+        transaction_id,
+      </if>
+      <if test="firstsub != null" >
+        firstSub,
+      </if>
+      <if test="fullsub != null" >
+        fullSub,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="updatetime != null" >
+        updateTime,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="onlinepay != null" >
+        onlinePay,
+      </if>
+      <if test="onlinepaytype != null" >
+        onlinePayType,
+      </if>
+      <if test="coupon != null" >
+        coupon,
+      </if>
+      <if test="operatoruser != null" >
+        operatoruser,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="skuName != null" >
+        #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuUnitPrice != null" >
+        #{skuUnitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="skuBuyNum != null" >
+        #{skuBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="skuWithdrawNum != null" >
+        #{skuWithdrawNum,jdbcType=INTEGER},
+      </if>
+      <if test="orderCreateTime != null" >
+        #{orderCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ordertotalpay != null" >
+        #{ordertotalpay,jdbcType=INTEGER},
+      </if>
+      <if test="collegename != null" >
+        #{collegename,jdbcType=VARCHAR},
+      </if>
+      <if test="receivername != null" >
+        #{receivername,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverphone != null" >
+        #{receiverphone,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="firstsub != null" >
+        #{firstsub,jdbcType=INTEGER},
+      </if>
+      <if test="fullsub != null" >
+        #{fullsub,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=BIGINT},
+      </if>
+      <if test="onlinepay != null" >
+        #{onlinepay,jdbcType=INTEGER},
+      </if>
+      <if test="onlinepaytype != null" >
+        #{onlinepaytype,jdbcType=INTEGER},
+      </if>
+      <if test="coupon != null" >
+        #{coupon,jdbcType=INTEGER},
+      </if>
+      <if test="operatoruser != null" >
+        #{operatoruser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall.admin.vo.order.Withdraw" >
+    update tb_withdraw
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDetailId != null" >
+        order_detail_id = #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="skuName != null" >
+        sku_name = #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuUnitPrice != null" >
+        sku_unit_price = #{skuUnitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="skuBuyNum != null" >
+        sku_buy_num = #{skuBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="skuWithdrawNum != null" >
+        sku_withdraw_num = #{skuWithdrawNum,jdbcType=INTEGER},
+      </if>
+      <if test="orderCreateTime != null" >
+        order_create_time = #{orderCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ordertotalpay != null" >
+        orderTotalPay = #{ordertotalpay,jdbcType=INTEGER},
+      </if>
+      <if test="collegename != null" >
+        collegeName = #{collegename,jdbcType=VARCHAR},
+      </if>
+      <if test="receivername != null" >
+        receiverName = #{receivername,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverphone != null" >
+        receiverPhone = #{receiverphone,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="firstsub != null" >
+        firstSub = #{firstsub,jdbcType=INTEGER},
+      </if>
+      <if test="fullsub != null" >
+        fullSub = #{fullsub,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=BIGINT},
+      </if>
+      <if test="onlinepay != null" >
+        onlinePay = #{onlinepay,jdbcType=INTEGER},
+      </if>
+      <if test="onlinepaytype != null" >
+        onlinePayType = #{onlinepaytype,jdbcType=INTEGER},
+      </if>
+      <if test="coupon != null" >
+        coupon = #{coupon,jdbcType=INTEGER},
+      </if>
+      <if test="operatoruser != null" >
+        operatoruser = #{operatoruser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall.admin.vo.order.Withdraw" >
+    update tb_withdraw
+    set user_id = #{userId,jdbcType=BIGINT},
+      order_id = #{orderId,jdbcType=BIGINT},
+      order_detail_id = #{orderDetailId,jdbcType=BIGINT},
+      sku_id = #{skuId,jdbcType=BIGINT},
+      sku_name = #{skuName,jdbcType=VARCHAR},
+      sku_unit_price = #{skuUnitPrice,jdbcType=INTEGER},
+      sku_buy_num = #{skuBuyNum,jdbcType=INTEGER},
+      sku_withdraw_num = #{skuWithdrawNum,jdbcType=INTEGER},
+      order_create_time = #{orderCreateTime,jdbcType=TIMESTAMP},
+      reason = #{reason,jdbcType=VARCHAR},
+      orderTotalPay = #{ordertotalpay,jdbcType=INTEGER},
+      collegeName = #{collegename,jdbcType=VARCHAR},
+      receiverName = #{receivername,jdbcType=VARCHAR},
+      receiverPhone = #{receiverphone,jdbcType=VARCHAR},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      firstSub = #{firstsub,jdbcType=INTEGER},
+      fullSub = #{fullsub,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      operator = #{operator,jdbcType=BIGINT},
+      onlinePay = #{onlinepay,jdbcType=INTEGER},
+      onlinePayType = #{onlinepaytype,jdbcType=INTEGER},
+      coupon = #{coupon,jdbcType=INTEGER},
+      operatoruser = #{operatoruser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

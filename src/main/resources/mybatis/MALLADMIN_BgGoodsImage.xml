@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BgGoodsImage" >
+
+  <resultMap id="BaseResultMap" type="BgGoodsImage" >
+    <id column="goods_img_id" property="goodsImgId" jdbcType="INTEGER" />
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="image_order" property="imageOrder" jdbcType="INTEGER" />
+    <result column="image_type" property="imageType" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    goods_img_id, bg_goods_id, image_url, image_order, image_type
+  </sql>
+
+  <select id="selectByBgGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods_image 
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and is_del = 0 ORDER BY image_order ASC
+  </select>
+  
+  <delete id="deleteByBgGoodsId" parameterType="java.lang.Long" >
+    update tb_goods_image 
+   	 set is_del = 1 
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insertBgGoodsImage" parameterType="java.util.List" >
+    insert into tb_goods_image (bg_goods_id, image_url, image_order, image_type, is_del)
+    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.bgGoodsId,jdbcType=INTEGER}, #{item.imageUrl,jdbcType=VARCHAR}, 
+     	 #{item.imageOrder,jdbcType=INTEGER}, #{item.imageType,jdbcType=TINYINT}, 0) 
+    </foreach> 
+  </insert>
+  
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Role">
+
+
+	<!-- 用户角色对象 -->
+	<resultMap id="roleMap" type="role">
+		<result property="role_id" column="role_id" />
+		<result property="role_name" column="role_name" />
+		<result property="remark" column="remark" />
+		<result property="is_del" column="is_del" />
+		<result property="admin_flag" column="admin_flag" />
+	</resultMap>
+
+	<!-- 根据用户的id获得用户的角色 -->
+	<select id="getUserRole" parameterType="long" resultMap="roleMap">
+		select
+		r.* from tb_role r,tb_user_role ur where r.role_id=ur.role_id and
+		ur.user_id=#{user_id}
+	</select>
+
+	<!-- 查询所有,不包括管理员角色 -->
+	<select id="getAllRole" resultMap="roleMap">
+		select r.* from tb_role r
+		where admin_flag != 1
+		order by role_id
+	</select>
+	<!-- 查询所有可用的角色 -->
+	<select id="getEnableRole" resultMap="roleMap">
+		select r.* from tb_role r
+		where is_del='0' order by role_id
+	</select>
+
+</mapper>

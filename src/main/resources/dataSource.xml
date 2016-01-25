@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+             
+	<bean id="dataSource" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mall"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall.username},password=${jdbc_mall.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall.username}"/>
+        <property name="password" value="${jdbc_mall.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall.url}"/>           
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+    
+	<bean id="dataSourceSlave" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mallSlave"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall_slave.username},password=${jdbc_mall_slave.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall_slave.username}"/>
+        <property name="password" value="${jdbc_mall_slave.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall_slave.url}"/>           
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+    
+    <bean id="dataSourceOrder0" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mallOrder0"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall_order0.username},password=${jdbc_mall_order0.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall_order0.username}"/>
+        <property name="password" value="${jdbc_mall_order0.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall_order0.url}"/>
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+    
+	<bean id="dataSourceOrder1" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mallOrder1"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall_order1.username},password=${jdbc_mall_order1.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall_order1.username}"/>
+        <property name="password" value="${jdbc_mall_order1.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall_order1.url}"/>
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+    
+	<bean id="dataSourceOrder2" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mallOrder2"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall_order2.username},password=${jdbc_mall_order2.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall_order2.username}"/>
+        <property name="password" value="${jdbc_mall_order2.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall_order2.url}"/>
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+
+	<bean id="dataSourceOrder3" class="com.mall.admin.model.proxool.ExtendsProxoolDataSource">
+        <property name="alias" value="mallOrder3"></property>
+        <property name="delegateProperties">
+            <value>user=${jdbc_mall_order3.username},password=${jdbc_mall_order3.password}</value>
+        </property>
+        <property name="user" value="${jdbc_mall_order3.username}"/>
+        <property name="password" value="${jdbc_mall_order3.password}"/>
+        <property name="driver" value="${jdbc_mall.driverClassName}"/>
+        <property name="driverUrl" value="${jdbc_mall_order3.url}"/>
+        <property name="maximumConnectionCount" value="${jdbc_mall.maximumConnectionCount}"></property>
+		<property name="maximumActiveTime" value="${jdbc_mall.maximumActiveTime}"></property>
+		<property name="maximumConnectionLifetime" value="${jdbc_mall.maximumConnectionLifetime}"></property>
+		<property name="prototypeCount" value="${jdbc_mall.prototypeCount}"></property>
+		<property name="houseKeepingSleepTime" value="${jdbc_mall.houseKeepingSleepTime}"></property>
+		<property name="simultaneousBuildThrottle" value="${jdbc_mall.simultaneousBuildThrottle}"></property>
+		<property name="houseKeepingTestSql" value="${jdbc_mall.houseKeepingTestSql}"></property>
+		<property name="verbose" value="${jdbc_mall.verbose}"></property>
+		<property name="statistics" value="${jdbc_mall.statistics}"></property>
+		<property name="statisticsLogLevel" value="${jdbc_mall.statisticsLogLevel}"></property>
+    </bean>
+    
+	
+	<!--mybatis与Spring整合  -->
+	<bean id="paginationInterceptor" class="com.mall.admin.model.pagination.PaginationInterceptor">
+		<property name="dialect">
+			<bean class="com.mall.admin.model.dialect.MySQLDialect" />
+		</property>
+	</bean>
+	
+	<bean id="tableShardInterceptor" class="com.mall.admin.model.yshard.TableShardInterceptor"></bean>
+	
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSource"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    <bean id="sqlSessionSlaveFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:SlaveSqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSourceSlave"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    
+    <bean id="sqlSessionOrder0Factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:OrderSqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSourceOrder0"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 			<ref bean="tableShardInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    <bean id="sqlSessionOrder1Factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:OrderSqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSourceOrder1"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 			<ref bean="tableShardInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    <bean id="sqlSessionOrder2Factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:OrderSqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSourceOrder2"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 			<ref bean="tableShardInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    <bean id="sqlSessionOrder3Factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:OrderSqlMapConfig.xml"/>
+	    <property name="dataSource" ref="dataSourceOrder3"/> 
+		<property name="plugins">
+	 		<array>
+	 			<ref bean="paginationInterceptor"/>
+	 			<ref bean="tableShardInterceptor"/>
+	 		</array>
+	 	</property>
+    </bean>
+    
+    <bean id="baseMallDaoImpl" class="com.mall.admin.model.mybatis.base.BaseMallDaoImpl" />
+    <bean id="baseSlaveMallDaoImpl" class="com.mall.admin.model.mybatis.base.BaseSlaveMallDaoImpl" />
+	<bean id="baseOrder0DaoImpl" class="com.mall.admin.model.mybatis.base.BaseOrder0DaoImpl"/>
+	<bean id="baseOrder1DaoImpl" class="com.mall.admin.model.mybatis.base.BaseOrder1DaoImpl"/>
+	<bean id="baseOrder2DaoImpl" class="com.mall.admin.model.mybatis.base.BaseOrder2DaoImpl"/>
+	<bean id="baseOrder3DaoImpl" class="com.mall.admin.model.mybatis.base.BaseOrder3DaoImpl"/>
+    
+    <!-- 配置sqlSessionTemplate --> 
+    <!-- 
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">  
+        <constructor-arg index="0" ref="sqlSessionFactory" />  
+    </bean> 
+     -->
+    
+    <!-- transaction support-->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- enable transaction annotation support -->
+	<tx:annotation-driven transaction-manager="txManager" />
+</beans>

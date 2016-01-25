@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PropertyValue" >
+  <resultMap id="BaseResultMap" type="PropertyValue" >
+    <id column="property_value_id" property="propertyValueId" jdbcType="INTEGER" />
+    <result column="property_value" property="propertyValue" jdbcType="VARCHAR" />
+    <result column="property_name_id" property="propertyNameId" jdbcType="INTEGER" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="show_order" property="showOrder" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    property_value_id, property_value, property_name_id,image_url,show_order, is_del
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_property_value
+    where property_value_id = #{propertyValueId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectListByNameId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_property_value
+    where property_name_id = #{propertyNameId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_property_value
+    where property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_property_value
+    set is_del = 1
+    where property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="PropertyValue" >
+    <selectKey resultType="java.lang.Integer" keyProperty="propertyValueId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_property_value ( property_value, property_name_id, image_url,show_order,
+      is_del)
+    values (#{propertyValue,jdbcType=VARCHAR}, #{propertyNameId,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, 
+      #{showOrder,jdbcType=TINYINT},#{isDel,jdbcType=TINYINT})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="PropertyValue" >
+    <selectKey resultType="java.lang.Integer" keyProperty="propertyValueId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_property_value
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="propertyValue != null" >
+        property_value,
+      </if>
+      <if test="propertyNameId != null" >
+        property_name_id,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="showOrder != null" >
+        show_order,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="propertyValue != null" >
+        #{propertyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyNameId != null" >
+        #{propertyNameId,jdbcType=INTEGER},
+      </if>
+       <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="showOrder != null" >
+        #{showOrder,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="PropertyValue" >
+    update tb_property_value
+    <set >
+      <if test="propertyValue != null" >
+        property_value = #{propertyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyNameId != null" >
+        property_name_id = #{propertyNameId,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+       image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="showOrder != null" >
+        show_order = #{showOrder,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="PropertyValue" >
+    update tb_property_value
+    set property_value = #{propertyValue,jdbcType=VARCHAR},
+      property_name_id = #{propertyNameId,jdbcType=INTEGER},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      show_order = #{showOrder,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where property_value_id = #{propertyValueId,jdbcType=INTEGER}
+  </update>
+</mapper>

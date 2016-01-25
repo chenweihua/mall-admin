@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="City">
+
+	<resultMap id="cityMap" type="city">
+		<result column="city_id" property="cityId" />
+		<result column="city_name" property="cityName" />
+		<result column="pid" property="pid" />
+		<result column="level" property="level" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="weight" property="weight" />
+		<result column="is_show" property="isShow" />
+		<result column="is_del" property="isDel" />
+		<result column="is_stop" property="isStop" />
+		<result column="operator_id" property="operatorId" />
+		<result column="uc_id" property="ucId" />
+	</resultMap>
+
+	<!-- 根据父节点查找对应的城市\地区，如果pid为0，则查询的是城市 -->
+	<select id="getCityByPid" parameterType="long" resultMap="cityMap">
+		select * from tb_city where
+		pid=#{pid} and is_del = 0
+	</select>
+	
+	<!-- 根据节点查找对应的城市\地区，如果pid为0，则查询的是城市 -->
+	<select id="getCityById" parameterType="long" resultMap="cityMap">
+		select * from tb_city where 
+		id=#{id}
+	</select>
+	
+	<select id="getCityByCityId" parameterType="long" resultMap="cityMap">
+		select * from tb_city where
+		city_id=#{cityId}
+	</select>
+	
+	<select id="getCitys" resultMap="cityMap">
+		select * from tb_city 
+		 order by create_time desc
+	</select>
+	
+	<!-- pengnanjing add 2015年7月20日11:40:29 -->
+	
+	<!-- 暂时支持按name查询 -->
+	<select id="getCitiesByParam"  resultMap="cityMap">
+		select * from tb_city where 1=1 
+		<trim>
+			<if test="nameLike != null and '' != nameLike">
+				and city_name like concat('%',#{nameLike},'%')
+			</if>
+			<if test="pid != null and ''!= pid">
+		    	and pid = #{pid}
+			</if>
+			<if test="isDel != null and '' != isDel">
+				and is_del = #{isDel}
+			</if>
+		</trim>
+	</select>
+	
+	<insert id="addCity" parameterType="city" useGeneratedKeys="true"
+		keyProperty="city_id">
+		insert into
+		tb_city(city_name, pid,
+		level, create_time, update_time, weight, is_show, is_del,
+		operator_id, is_stop, uc_id)
+		values(#{cityName},#{pid},#{level},now(),now(),#{weight},#{isShow},#{isDel},#{operatorId},#{isStop},#{ucId});
+	</insert>
+	
+	<select id="getByName" resultMap="cityMap">
+		select * from tb_city 
+		where city_name = #{cityName}
+	</select>
+	
+	<select id="getByUcId" resultMap="cityMap" parameterType="map">
+		select * from tb_city 
+		where uc_id = #{ucId} and level = #{level}
+	</select>
+
+	<!-- 软删除， 设置isdel=1 -->
+	<update id="deleteCityById" parameterType="map">
+		update tb_city set
+		is_del=1 , update_time = now(), operator_id = #{operatorId}
+		where
+		city_id=#{cityId}
+	</update>
+
+
+	<update id="updateCity" parameterType="city">
+		update tb_city set
+		city_name=#{cityName}, pid=#{pid},
+		level=#{level}, weight=#{weight},
+		is_show=#{isShow}, is_del=#{isDel}, 
+		update_time=now(),
+		operator_id=#{operatorId},
+		is_stop=#{isStop},
+		uc_id=#{ucId}
+		where
+		city_id=#{cityId}
+	</update>
+	<!-- add end -->
+
+</mapper>

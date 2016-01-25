@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"  
+	
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+	     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd 
+	     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+        <property name="defaultEncoding" value="UTF-8"/>  
+        <!-- 指定所上传文件的总大小不能超过200KB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->  
+        <property name="maxUploadSize" value="10000000"/> 
+        <property name="resolveLazily" value="true"/>  
+    </bean> 
+    
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+         <property name="locations">
+            <list>
+                <value>classpath:jdbc.properties</value>
+                <value>classpath:config.properties</value>
+            </list>
+    	</property>
+    </bean>
+   
+
+	<import resource="classes/dataSource.xml" />
+	
+	<task:annotation-driven/> 
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.mall.admin*" >
+		 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />   
+	</context:component-scan>
+	
+  	<bean id="categoryConstant" class="com.mall.admin.constant.CategoryConstant"
+		init-method="init"/> 
+		
+  	<bean id="collegeConstant" class="com.mall.admin.constant.CollegeConstant"
+		init-method="init"/>
+	
+	<bean id="CityConstant" class="com.mall.admin.constant.CityConstant"
+		init-method="init"/>
+	
+	<bean id="StorageConstant" class="com.mall.admin.constant.StroageConstant"
+		init-method="init"/>
+	
+  	<bean id="RecordTypeConstant" class="com.mall.admin.constant.RecordTypeConstant"
+	    init-method="init"/>
+  	
+  	<bean id="SellerConstant" class="com.mall.admin.constant.SellerConstant"
+  	     init-method="init"/>
+  	
+  	<bean id="DeliverCompanyConstant" class="com.mall.admin.constant.DeliverCompanyConstant"
+  	     init-method="init"/>
+  	 
+  	 <bean id="navMenuConstant" class="com.mall.admin.constant.NavigationMenuConstant"
+  	     init-method="init"/>
+  	     
+  	<bean id="IniBean" class="com.mall.admin.constant.IniBean"
+  	     init-method="init"/>
+  	     
+  	<bean id="configure" class="com.mall.admin.vo.ConfigureBean"></bean>
+	
+	<bean id="loginfilter" class="com.mall.admin.filter.LoginFilter"></bean>
+	
+	<!-- transaction manager, use DataSourceTransactionManager -->
+	 <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	       <property name="dataSource" ref="dataSource" />
+	 </bean>
+	 
+	 <!-- 事务控制   -->  
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+	<bean id="dictionaryDao" class="com.mall.admin.model.mybatis.common.DictionaryDaoImpl">
+	       <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	 </bean>
+	
+	<aop:config>
+		<aop:pointcut id="serviceMethods" expression="execution(* com.mall.admin.service.mallbase.impl.*.*(..))"/> 
+	 	<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/> 
+	</aop:config>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+		  <tx:method name="find*" read-only="true"/>
+		  <tx:method name="load*" read-only="true"/>
+		  <tx:method name="add*" read-only="false" propagation="REQUIRES_NEW" rollback-for="Exception"/>
+		  <tx:method name="*" rollback-for="CustomException"/>
+		</tx:attributes>
+	</tx:advice>
+</beans>

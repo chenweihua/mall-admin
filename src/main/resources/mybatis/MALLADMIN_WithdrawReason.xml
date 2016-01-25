@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="WithdrawReason" >
+  <resultMap id="BaseResultMap" type="WithdrawReason" >
+    <id column="withdraw_reason_id" property="withdrawReasonId" jdbcType="INTEGER" />
+    <result column="withdraw_reason_pid" property="withdrawReasonPid" jdbcType="INTEGER" />
+    <result column="withdraw_reason_level" property="withdrawReasonLevel" jdbcType="INTEGER" />
+    <result column="withdraw_reason_name" property="withdrawReasonName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    withdraw_reason_id, withdraw_reason_pid,withdraw_reason_level, withdraw_reason_name, create_time,is_del
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_withdraw_reason
+    where withdraw_reason_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_withdraw_reason
+    where withdraw_reason_level = #{level,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectByPid" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_withdraw_reason
+    where withdraw_reason_Pid = #{pid,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_withdraw_reason
+    where withdraw_reason_id = #{withdrawReasonId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="WithdrawReason" >
+    insert into tb_withdraw_reason (withdraw_reason_id, withdraw_reason_pid, withdraw_reason_level,
+      withdraw_reason_name, create_time)
+    values (#{withdrawReasonId,jdbcType=INTEGER}, #{withdrawReasonPid,jdbcType=INTEGER}, #{withdrawReasonLevel,jdbcType=INTEGER}, 
+      #{withdrawReasonName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="WithdrawReason" >
+    update tb_withdraw_reason
+    set withdraw_reason_pid = #{withdrawReasonPid,jdbcType=INTEGER},
+      withdraw_reason_level = #{withdrawReasonLevel,jdbcType=INTEGER},
+      withdraw_reason_name = #{withdrawReasonName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where withdraw_reason_id = #{withdrawReasonId,jdbcType=INTEGER}
+  </update>
+</mapper>

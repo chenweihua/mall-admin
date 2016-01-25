@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BannerCollege" >
+  <resultMap id="BaseResultMap" type="BannerCollege" >
+    <id column="banner_college_id" property="bannerCollegeId" jdbcType="INTEGER" />
+    <result column="banner_id" property="bannerId" jdbcType="INTEGER" />
+    <result column="college_id" property="collegeId" jdbcType="INTEGER" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    banner_college_id, banner_id, college_id, is_del, operator, create_time, update_time
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_banner_college
+    where banner_college_id = #{bannerCollegeId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUnionPrimaryKey" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_banner_college
+    where banner_id = #{bannerId,jdbcType=INTEGER} and college_id = #{collegeId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByBannerId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_banner_college
+    where banner_id = #{bannerId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_banner_college
+    where banner_college_id = #{bannerCollegeId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_banner_college
+    set is_del = 1
+    where banner_college_id = #{bannerCollegeId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByUnionPrimaryKey" parameterType="java.util.Map" >
+    update tb_banner_college
+    set is_del = 1
+    where banner_id = #{bannerId,jdbcType=INTEGER} and
+      college_id = #{collegeId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="BannerCollege" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bannerCollegeId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_banner_college (banner_id, college_id, 
+      is_del, operator, create_time, 
+      update_time)
+    values ( #{bannerId,jdbcType=INTEGER}, #{collegeId,jdbcType=INTEGER}, 
+      #{isDel,jdbcType=TINYINT}, #{operator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="BannerCollege" >
+    <selectKey resultType="java.lang.Integer" keyProperty="bannerCollegeId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_banner_college
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bannerId != null" >
+        banner_id,
+      </if>
+      <if test="collegeId != null" >
+        college_id,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bannerId != null" >
+        #{bannerId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="BannerCollege" >
+    update tb_banner_college
+    <set >
+      <if test="bannerId != null" >
+        banner_id = #{bannerId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        college_id = #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where banner_college_id = #{bannerCollegeId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="BannerCollege" >
+    update tb_banner_college
+    set banner_id = #{bannerId,jdbcType=INTEGER},
+      college_id = #{collegeId,jdbcType=INTEGER},
+      is_del = #{isDel,jdbcType=TINYINT},
+      operator = #{operator,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where banner_college_id = #{bannerCollegeId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByBannerIdCollegeId" parameterType="BannerCollege" >
+    update tb_banner_college
+    set is_del = #{isDel,jdbcType=TINYINT},
+      operator = #{operator,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where banner_id = #{bannerId,jdbcType=INTEGER} and
+      college_id = #{collegeId,jdbcType=INTEGER}
+  </update>
+</mapper>

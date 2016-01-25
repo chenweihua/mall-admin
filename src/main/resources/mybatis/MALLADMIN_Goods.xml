@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Goods" >
+  <resultMap id="BaseResultMap" type="Goods" >
+    <id column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="bg_goods_id" property="bgGoodsId" jdbcType="INTEGER" />
+    <result column="college_id" property="collegeId" jdbcType="INTEGER" />
+    <result column="bg_goods_name" property="bgGoodsName" jdbcType="VARCHAR" />
+    <result column="bg_goods_subname" property="bgGoodsSubname" jdbcType="VARCHAR" />
+    <result column="goods_desc" property="description" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="max_num" property="maxNum" jdbcType="INTEGER" />
+    <result column="goods_type" property="goodsType" jdbcType="TINYINT" />
+    <result column="goods_status" property="status" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <result column="sale_spec" property="saleSpec" jdbcType="VARCHAR" />
+    <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+    <result column="package_spec" property="packageSpec" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="shelf_life" property="shelfLife" jdbcType="VARCHAR" />
+    <result column="storage_id" property="storageId" jdbcType="INTEGER" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    goods_id, bg_goods_id, college_id, bg_goods_name, bg_goods_subname, goods_desc, 
+    remark, category_id, unit, image_url, weight, max_num, goods_type, goods_status,is_del,sale_spec,origin_place,
+    package_spec,brand,shelf_life,storage_id
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods
+    where goods_id = #{goodsId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  <!-- 设置价格使用 -->
+  <select id="selectCollegesByBgGoodsId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    select DISTINCT
+    college_id
+    from tb_goods
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and goods_status != 4 and is_del = 0;
+  </select>
+  <!-- 范围设置，考虑全量，没有加is_del=0,上单 -->
+  <select id="selectGoodsByBgGoodsId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    select DISTINCT
+    goods_id
+    from tb_goods
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER};
+  </select>
+  
+  <select id="selectRdcCollegesByBgGoodsId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    SELECT DISTINCT
+    g.college_id 
+    FROM tb_goods g LEFT JOIN tb_sku s
+    ON bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} AND g.is_del = 0 AND g.`goods_id` = s.goods_id
+    WHERE s.`distribute_type` = 0 AND s.`is_del` = 0
+  </select>
+  
+  <select id="selectLdcCollegesByBgGoodsId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    SELECT DISTINCT
+    g.college_id 
+    FROM tb_goods g LEFT JOIN tb_sku s
+    ON bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} AND g.is_del = 0 AND g.`goods_id` = s.goods_id
+    WHERE s.`distribute_type` = 1 AND s.`is_del` = 0
+  </select>
+  
+  <select id="selectCollegeIdListByBgGoodsIdAndDistributeType" resultType="java.lang.Long" parameterType="hashmap" >
+    SELECT DISTINCT
+    g.college_id 
+    FROM tb_goods g LEFT JOIN tb_sku s
+    ON bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} AND g.is_del = 0 AND g.`goods_id` = s.goods_id
+    WHERE s.`distribute_type` = #{distributeType,jdbcType=INTEGER} AND s.`is_del` = 0
+  </select>
+  
+  <select id="getByBgGoodsIdAndCollegeId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select DISTINCT
+	<include refid="Base_Column_List" />
+    from tb_goods
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and college_id = #{collegeId,jdbcType=INTEGER};
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_goods
+    where goods_id = #{goodsId,jdbcType=INTEGER} and is_del = 0;
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.util.Map" >
+    update tb_goods
+    set is_del = 1
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and college_id = #{collegeId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByBgGoodsId" parameterType="java.util.Map" >
+    update tb_goods
+    set is_del = 1
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteGoodsAndSkuByBgGoodsId" parameterType="java.lang.Long" >
+  	UPDATE tb_goods g,tb_sku s
+	SET g.`is_del` = 1,s.`is_del` = 1
+	WHERE g.`goods_id` = s.`goods_id` AND g.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="Goods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="goodsId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods (bg_goods_id, college_id, 
+      bg_goods_name, bg_goods_subname, goods_desc, 
+      remark, category_id, unit, 
+      image_url, weight, max_num, 
+      goods_type, goods_status, is_del,sale_spec,origin_place,package_spec, brand, shelf_life,storage_id
+      )
+    values (#{bgGoodsId,jdbcType=INTEGER}, #{collegeId,jdbcType=INTEGER}, 
+      #{bgGoodsName,jdbcType=VARCHAR}, #{bgGoodsSubname,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, #{unit,jdbcType=VARCHAR}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{maxNum,jdbcType=INTEGER}, 
+      #{goodsType,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, #{isDel,jdbcType=TINYINT},
+      #{saleSpec,jdbcType=VARCHAR}, #{originPlace,jdbcType=VARCHAR},
+      #{packageSpec,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, #{shelfLife,jdbcType=VARCHAR},
+	  #{storageId,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="Goods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="goodsId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      goods_id,
+      <if test="bgGoodsId != null" >
+        bg_goods_id,
+      </if>
+      <if test="collegeId != null" >
+        college_id,
+      </if>
+      <if test="bgGoodsName != null" >
+        bg_goods_name,
+      </if>
+      <if test="bgGoodsSubname != null" >
+        bg_goods_subname,
+      </if>
+      <if test="description != null" >
+        goods_desc,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="maxNum != null" >
+        max_num,
+      </if>
+      <if test="goodsType != null" >
+        goods_type,
+      </if>
+      <if test="status != null" >
+        goods_status,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="saleSpec != null" >
+        sale_spec,
+      </if>
+      <if test="originPlace != null" >
+        origin_place,
+      </if>
+      <if test="packageSpec != null" >
+      	package_spec,
+      </if>
+      <if test="brand != null" >
+     	 brand,
+      </if>
+      <if test="shelfLife != null" >
+     	 shelf_life,
+      </if>
+      <if test="storageId != null" >
+        storage_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{goodsId,jdbcType=INTEGER},
+      <if test="bgGoodsId != null" >
+        #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="bgGoodsName != null" >
+        #{bgGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="bgGoodsSubname != null" >
+        #{bgGoodsSubname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="saleSpec != null" >
+        #{saleSpec,jdbcType=VARCHAR},
+      </if>
+       <if test="originPlace != null" >
+        #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="packageSpec != null" >
+      	#{packageSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+     	 #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="shelfLife != null" >
+     	 #{shelfLife,jdbcType=VARCHAR},
+      </if>
+      <if test="storageId != null" >
+        #{storageId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="Goods" >
+    update tb_goods
+    <set >
+      <if test="bgGoodsId != null" >
+        bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        college_id = #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="bgGoodsName != null" >
+        bg_goods_name = #{bgGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="bgGoodsSubname != null" >
+        bg_goods_subname = #{bgGoodsSubname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        goods_desc = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        max_num = #{maxNum,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        goods_type = #{goodsType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        goods_status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="saleSpec != null" >
+        sale_spec = #{saleSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="originPlace != null" >
+        origin_place = #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="packageSpec != null" >
+        package_spec = #{packageSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="shelfLife != null" >
+        shelf_life = #{shelfLife,jdbcType=VARCHAR},
+      </if>
+      <if test="storageId != null" >
+        storage_id = #{storageId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="Goods" >
+    update tb_goods
+    set bg_goods_id = #{bgGoodsId,jdbcType=INTEGER},
+      college_id = #{collegeId,jdbcType=INTEGER},
+      bg_goods_name = #{bgGoodsName,jdbcType=VARCHAR},
+      bg_goods_subname = #{bgGoodsSubname,jdbcType=VARCHAR},
+      goods_desc = #{description,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      max_num = #{maxNum,jdbcType=INTEGER},
+      goods_type = #{goodsType,jdbcType=TINYINT},
+      goods_status = #{status,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT},
+      sale_spec = #{saleSpec,jdbcType=VARCHAR},
+      origin_place = #{originPlace,jdbcType=VARCHAR},
+      package_spec = #{packageSpec,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      shelf_life = #{shelfLife,jdbcType=VARCHAR},
+	  storage_id = #{storageId,jdbcType=INTEGER}	  
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateStatus" parameterType="java.util.Map" >
+    update tb_goods
+    set goods_status = #{status,jdbcType=TINYINT}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} and college_id = #{collegeId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateMaxNumByGoodsId" parameterType="java.util.Map" >
+    update tb_goods
+    set max_num = #{maxNum,jdbcType=TINYINT}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  
+    <update id="updateMaxNumByBgGoodsId" parameterType="java.util.Map" >
+    update tb_goods
+    set max_num = #{maxNum,jdbcType=TINYINT}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateMaxNumByUnionKey" parameterType="java.util.Map" >
+    update tb_goods
+    set max_num = #{maxNum,jdbcType=TINYINT}
+    where is_del = 0
+    <if test="bgGoodsId != -1">
+   		and bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+    </if>
+    <if test="collegeId != -1">
+   		and college_id = #{collegeId,jdbcType=INTEGER}
+    </if>
+    
+  </update>
+  
+  <update id="updateWeightStatus" parameterType="java.util.Map" >
+    update tb_goods
+    set weight = #{weight,jdbcType=TINYINT},
+   		goods_status = #{status,jdbcType=TINYINT}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByBgGoods" parameterType="BgGoods" >
+    update tb_goods
+    set bg_goods_name = #{bgGoodsName},
+        bg_goods_subname = #{bgGoodsSubname},
+        remark = #{remark},
+        goods_desc = #{description},
+        category_id = #{categoryId},
+        unit = #{unit},
+        image_url = #{imageUrl},
+        goods_type = #{goodsType},
+        sale_spec = #{saleSpec,jdbcType=VARCHAR},
+        origin_place = #{originPlace,jdbcType=VARCHAR},
+        package_spec = #{packageSpec,jdbcType=VARCHAR},
+      	brand = #{brand,jdbcType=VARCHAR},
+        shelf_life = #{shelfLife,jdbcType=VARCHAR},
+        storage_id = #{storageId,jdbcType=INTEGER}
+    where bg_goods_id = #{bgGoodsId,jdbcType=INTEGER}
+  </update>
+  <!-- 查询没有可用sku的goodsid -->
+  <select id="selectNeedDelGoods" resultType="java.lang.Long" >
+	  select goods_id from tb_goods where goods_id not in (SELECT
+		g.goods_id
+	FROM
+		tb_goods g,
+		tb_sku s
+	WHERE
+		g.goods_id = s.goods_id
+	AND s.is_del = '0') and is_del='0'
+  </select>
+  <update id="deleteGoodsByIds" parameterType="hashmap">
+  	update tb_goods set is_del='1' where goods_id in 
+  	 <foreach item="item" collection="goodsIds" separator="," open="(" close=")" index="">  
+      #{item, jdbcType=NUMERIC}  
+    </foreach>  
+  </update>
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ActivityTemplate" >
+
+  <resultMap id="ActivityTemplateResultMap" type="ActivityTemplate" >
+    
+    <id column="activity_template_id" jdbcType="BIGINT" property="activityTemplateId" />
+	<result column="activity_template_id" jdbcType="BIGINT" property="activityTemplateId" />
+	<result column="template_name" jdbcType="VARCHAR" property="templateName" />
+	<result column="template_type" jdbcType="TINYINT" property="templateType" />
+	<result column="color_value" jdbcType="VARCHAR" property="colorValue" />
+	<result column="header_image_url" jdbcType="VARCHAR" property="headerImageUrl" />
+	<result column="image_url" jdbcType="LONGVARCHAR" property="imageUrl" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		activity_template_id,
+		template_name,
+		template_type,
+		color_value,
+		header_image_url,
+		image_url,
+		create_time,
+		update_time
+  </sql>
+  
+  <select id="selectAllActivityTemplate"  resultMap="ActivityTemplateResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_activity_template order by create_time desc
+  </select>
+  
+  <select id="selectActivityTemplateByPrimaryKey" parameterType="java.lang.Long" resultMap="ActivityTemplateResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_activity_template
+    where activity_template_id = #{activityTemplateId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectActivityTemplate" parameterType="ActivityTemplate" resultMap="ActivityTemplateResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_activity_template
+    where 1=1 
+		<if test="activityTemplateId != null">
+			and activity_template_id = #{activityTemplateId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="templateName != null">
+			and template_name = #{templateName,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="templateType != null">
+			and template_type = #{templateType,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="colorValue != null">
+			and color_value = #{colorValue,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="headerImageUrl != null">
+			and header_image_url = #{headerImageUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="imageUrl != null">
+			and image_url = #{imageUrl,jdbcType=LONGVARCHAR} 
+		</if>
+		
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="updateTime != null">
+			and update_time = #{updateTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+  </select>
+  
+  
+  <delete id="deleteActivityTemplateByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_activity_template
+    where activity_template_id = #{activityTemplateId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertActivityTemplate" parameterType="ActivityTemplate">
+    insert into tb_activity_template
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="activityTemplateId != null">
+        activity_template_id,
+      </if>
+      <if test="templateName != null">
+        template_name,
+      </if>
+      <if test="templateType != null">
+        template_type,
+      </if>
+      <if test="colorValue != null">
+        color_value,
+      </if>
+      <if test="headerImageUrl != null">
+        header_image_url,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="activityTemplateId != null">
+        #{activityTemplateId,jdbcType=BIGINT},
+      </if>
+      <if test="templateName != null">
+        #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null">
+        #{templateType,jdbcType=TINYINT},
+      </if>
+      <if test="colorValue != null">
+        #{colorValue,jdbcType=VARCHAR},
+      </if>
+      <if test="headerImageUrl != null">
+        #{headerImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateActivityTemplateByPrimaryKey" parameterType="ActivityTemplate">
+    
+    update tb_activity_template
+    <set>
+			<if test="templateName != null">
+				template_name = #{templateName,jdbcType=VARCHAR},
+			</if>
+			<if test="templateType != null">
+				template_type = #{templateType,jdbcType=TINYINT},
+			</if>
+			<if test="colorValue != null">
+				color_value = #{colorValue,jdbcType=VARCHAR},
+			</if>
+			<if test="headerImageUrl != null">
+				header_image_url = #{headerImageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="imageUrl != null">
+				image_url = #{imageUrl,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+    </set>
+    where activity_template_id = #{activityTemplateId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getPageActivityTemplateByPage" resultMap="ActivityTemplateResultMap">
+		select * from tb_activity_template
+		where 1=1
+		
+		<if test="templateName != null  and '' != templateName">
+				and template_name like CONCAT('%',#{templateName},'%' ) 
+		</if>
+		
+		order by create_time desc
+		
+	</select>
+ 
+  
+  
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 CST 2013-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Suppiler">	
+	<resultMap id="suppilerMap" type="suppiler">
+		<result property="shopId" column="shop_id"/>
+		<result property="shopName" column="shop_name"/>
+		<result property="shopKeeper" column="shop_keeper"/>
+		<result property="shopPhone" column="shop_phone"/>
+		<result property="shopWeight" column="shop_weight"/>
+		<result property="shopType" column="shop_type"/>
+		<result property="shopIsOpen" column="shop_isOpen"/>
+		<result property="sellerId" column="seller_id"/>
+		<result property="sellerCode" column="seller_code"/>
+		<result property="createTime" javaType="java.sql.Timestamp" column="create_time"/>
+		<result property="updateTime" javaType="java.sql.Timestamp" column="update_time"/>
+		<result property="operateId" column="operate_id"/>
+		<result property="storageId" column="storage_id"/>
+		<association property="imageUrl" column="storage_id"  javaType="java.lang.Long" select="getImgUrlByStorageId"></association> 
+	</resultMap>
+
+ 	<select id="getImgUrlByStorageId" resultType="java.lang.String" parameterType="java.lang.Long" >
+	    select 
+	    image_url 
+	    from tb_activity
+	    where storage_id = #{storageId,jdbcType=BIGINT}
+  	</select>
+	<select id="getCount" resultType="java.lang.Long">
+		select count(*) from tb_shop_profile
+	</select>
+	
+	<select id="getPageSuppilerByPage" resultMap="suppilerMap" parameterType="java.util.Map">
+		select * from tb_shop_profile 
+		<where> 
+			<trim>
+	            <if test="shop_name_like !='' and shop_name_like!=null">
+	                shop_name like '%${shop_name_like}%' 
+	            </if>
+	        </trim>
+	        <if test="shopType != null">
+				and `shop_type` = #{shopType,jdbcType=INTEGER} 
+			</if>
+			<if test="shopIsOpen != null">
+				and `shop_isOpen` = #{shopIsOpen,jdbcType=INTEGER} 
+			</if>
+        </where>
+        ORDER BY create_time desc
+	</select>
+	
+	<insert id="addSuppiler" parameterType="Suppiler" >
+		<selectKey resultType="java.lang.Integer" keyProperty="shopId" order="AFTER" >
+    		SELECT LAST_INSERT_ID() 
+  		</selectKey>
+  		insert into tb_shop_profile 
+  		(shop_name,shop_keeper,shop_phone,shop_weight,shop_type,shop_isOpen,seller_id,seller_code,create_time,update_time,operate_id,storage_id) 
+  		values (#{shopName},#{shopKeeper},#{shopPhone},#{shopWeight},#{shopType},#{shopIsOpen},#{sellerId},#{sellerCode},#{createTime},#{updateTime},#{operateId},#{storageId})
+	</insert>
+	
+	<update id="updateSuppiler" parameterType="Suppiler">  
+        update tb_shop_profile 
+	        set shop_name = #{shopName},
+	        shop_keeper = #{shopKeeper},
+	        shop_name = #{shopName},
+	        shop_phone = #{shopPhone},
+	        shop_weight = #{shopWeight},
+	        shop_type = #{shopType},
+	        shop_isOpen = #{shopIsOpen},
+	        seller_id = #{sellerId},
+	        seller_code = #{sellerCode},
+	        update_time = #{updateTime},
+	        operate_id = #{operateId}
+        where shop_id = #{shopId}  
+    </update> 
+    
+    <update id="updateSuppilerStatus" parameterType="Suppiler">  
+        update tb_shop_profile set 
+	        shop_isOpen = #{shopIsOpen},
+	        update_time = #{updateTime},
+	        operate_id = #{operateId}
+        where shop_id = #{shopId}  
+    </update> 
+    
+    <select id="getSuppilerById" parameterType="java.lang.Long" resultMap="suppilerMap">
+    	select * from tb_shop_profile where shop_id=#{supplierId}
+    </select>
+    
+     <select id="getSupplierByStorageId" parameterType="java.lang.Long" resultMap="suppilerMap">
+    	select * from tb_shop_profile where shop_isOpen = 1 and storage_id=#{storageId}
+    </select>
+    
+</mapper>

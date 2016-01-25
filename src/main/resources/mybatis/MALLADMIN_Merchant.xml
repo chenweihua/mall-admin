@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Merchant" >
+  <resultMap id="MerchantMap" type="merchant" >
+    <id column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+    <result column="merchant_account" property="merchantAccount" jdbcType="VARCHAR" />
+    <result column="merchant_area_id" property="merchantAreaId" jdbcType="VARCHAR" />
+    <result column="merchant_addr" property="merchantAddr" jdbcType="VARCHAR" />
+    <result column="shop_owner" property="shopOwner" jdbcType="VARCHAR" />
+    <result column="owner_phone" property="ownerPhone" jdbcType="VARCHAR" />
+    <result column="merchant_email" property="merchantEmail" jdbcType="VARCHAR" />
+    <result column="merchant_type" property="merchantType" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="bank_user_name" property="bankUserName" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="operator" property="operator" jdbcType="BIGINT" />
+  </resultMap>
+   <resultMap id="MerchantSeqMap" type="merchantSeq" >
+   	<id column="seq_id" property="seqId" jdbcType="INTEGER"></id>
+   	<result column="seq_num" property="seqNum" jdbcType="INTEGER"></result>
+   </resultMap>
+  
+  <!-- 查询门店信息列表 -->
+  <select id="selectListByPage" resultMap="MerchantMap" parameterType="map" >
+    select * 
+    from tb_merchant m
+    where 1=1
+    <if test="merchantName!=null">
+    	and (m.merchant_name like concat('%',#{merchantName},'%') or merchant_no like concat('%',#{merchantName},'%'))
+    </if>
+    <if test="shopOwner!=null">
+    	and m.shop_owner like concat('%',#{shopOwner},'%')
+    </if>
+    <if test="status!=null">
+    	and m.status=#{status}
+    </if>
+  </select>
+ 	<!-- 根据id查询商户信息 -->
+ 	<select id="selectMerchantById" resultMap="MerchantMap" parameterType="java.lang.Long">
+ 		select * from tb_merchant m where merchant_id=#{merchantId}
+ 	</select>
+ 	
+ 	 <!-- 根据用户id查询商户信息 -->
+ 	<select id="selectMerchantByUserId" resultMap="MerchantMap" parameterType="java.lang.Long">
+ 		select * from tb_merchant m where user_id=#{userId}
+ 	</select>
+ 	 <!-- 根据用户名称查询商户信息 -->
+ 	<select id="selectMerchantByName" resultMap="MerchantMap" parameterType="java.lang.String">
+ 		select * from tb_merchant m where merchant_name=#{merchantName}
+ 	</select>
+ 	
+ 	<!-- 更新商户的可用状态 -->
+ 	<update id="updateStatus" parameterType="map">
+ 		update tb_merchant set status=#{status} where merchant_id=#{merchantId}
+ 	</update>
+ 	
+ 	<update id="updateMerchant" parameterType="merchant">
+ 		update tb_merchant set merchant_name=#{merchantName},merchant_addr = #{merchantAddr},
+ 			shop_owner=#{shopOwner},owner_phone=#{ownerPhone},merchant_email=#{merchantEmail},
+ 			bank_account = #{bankAccount},bank_name=#{bankName},branch_name=#{branchName},
+ 			bank_user_name=#{bankUserName},update_time=now(),operator=#{operator},`merchant_area_id`=#{merchantAreaId}
+ 		where merchant_id=#{merchantId}
+ 	</update>
+ 	
+ 	<insert id="insertMerchant" parameterType="merchant">
+ 		insert into tb_merchant(`user_id`,`merchant_name`,`merchant_no`,`merchant_account`,`merchant_addr`,
+ 		`shop_owner`,`owner_phone`,`merchant_email`,`merchant_type`,`status`,`bank_account`,`bank_name`,`branch_name`,`bank_user_name`,
+ 		`create_time`,`update_time`,`creator`,`operator`,`merchant_area_id`)
+ 		 values (#{userId},#{merchantName},#{merchantNo},#{merchantAccount},#{merchantAddr},#{shopOwner},#{ownerPhone},
+ 		 #{merchantEmail},#{merchantType},1,#{bankAccount},#{bankName},#{branchName},#{bankUserName},now(),now(),#{creator},#{operator},#{merchantAreaId});
+ 	</insert>
+ 	
+ 	<!-- 查询最大的序列值 -->
+ 	<select id="selectMaxSeq" resultMap="MerchantSeqMap" parameterType="java.lang.Long">
+ 		select * from tb_merchant_seq where seq_id=#{seqId}
+ 	</select>
+ 	<!-- 更新最大的序列值 -->
+ 	 <update id="updateMaxSeq"  parameterType="java.lang.Long">
+ 		update tb_merchant_seq set seq_num=seq_num+1 where seq_id=#{seqId}
+ 	</update>
+ 	
+</mapper>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Sku" >
+  <resultMap id="BaseResultMap" type="Sku" >
+    <id column="sku_id" property="skuId" jdbcType="INTEGER" />
+    <result column="bg_sku_id" property="bgSkuId" jdbcType="INTEGER" />
+    <result column="college_id" property="collegeId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="origin_price" property="originPrice" jdbcType="INTEGER" />
+    <result column="app_price" property="appPrice" jdbcType="INTEGER" />
+    <result column="wap_price" property="wapPrice" jdbcType="INTEGER" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="sku_type" property="skuType" jdbcType="TINYINT" />
+    <result column="sku_status" property="skuStatus" jdbcType="TINYINT" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="distribute_type" property="distributeType" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <result column="storage_id" property="storageId" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    sku_id, bg_sku_id, college_id, goods_id, origin_price, app_price, wap_price, stock, 
+    sku_type, sku_status,image_url, distribute_type, is_del,storage_id
+  </sql>
+  
+   <select id="select4copy2activity" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT s.* FROM tb_goods g,tb_sku s
+	WHERE g.goods_id = s.goods_id AND g.college_id = #{collegeId,jdbcType=INTEGER} AND s.distribute_type = 1 AND g.is_del = 0 AND s.is_del = 0
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku
+    where sku_id = #{skuId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectCollegeIdsByBgSkuId" resultType="java.lang.Long" parameterType="hashmap" >
+    SELECT DISTINCT college_id
+	FROM tb_sku
+	WHERE is_del = 0 and (sku_type = 1 or sku_type = 2) AND bg_sku_id = #{bgSkuId,jdbcType=INTEGER} AND distribute_type = #{isLdc,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku
+    where goods_id = #{goodsId,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="selectListByGoodsIdSkuStatus" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku
+    where goods_id = #{goodsId,jdbcType=INTEGER} and sku_status = #{skuStatus,jdbcType=INTEGER} and is_del = 0
+  </select>
+  
+  <select id="getBybgSkuIdAndCollegeIdAndGoodsId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_sku
+    where bg_sku_id = #{bgSkuId,jdbcType=INTEGER}
+          and college_id = #{collegeId,jdbcType=INTEGER}
+          and goods_id = #{goodsId,jdbcType=INTEGER}
+          and distribute_type = #{distributeType,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByBgGoodsIdCollegeId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+ 	SELECT s.* 
+ 	FROM tb_goods g, tb_sku s
+	WHERE g.`goods_id` = s.`goods_id` AND s.`is_del` = 0 AND g.`is_del` = 0
+ 	<if test="bgGoodsId != -1">
+		AND g.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER}
+	</if>
+	<if test="collegeId != -1">
+		AND g.`college_id` = #{collegeId,jdbcType=INTEGER}
+	</if>
+  </select>
+  
+  <delete id="deleteRealByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_sku
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update tb_sku
+    set is_del = 1
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByGoodsId" parameterType="hashmap" >
+    update tb_sku
+    set is_del = 1
+    where goods_id in
+    <foreach item="id" collection="goodsIds" open="(" separator="," close=")"> 
+          #{id} 
+    </foreach> 
+  </delete>
+ 
+  <insert id="insert" parameterType="Sku" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_sku (bg_sku_id, college_id, 
+      goods_id, origin_price, app_price, 
+      wap_price, stock, sku_type, 
+      sku_status,image_url, distribute_type, is_del,storage_id
+      )
+    values (#{bgSkuId,jdbcType=INTEGER}, #{collegeId,jdbcType=INTEGER}, 
+      #{goodsId,jdbcType=INTEGER}, #{originPrice,jdbcType=INTEGER}, #{appPrice,jdbcType=INTEGER}, 
+      #{wapPrice,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, #{skuType,jdbcType=TINYINT}, 
+      #{skuStatus,jdbcType=TINYINT},#{imageUrl,jdbcType=VARCHAR}, #{distributeType,jdbcType=TINYINT},  #{isDel,jdbcType=TINYINT},  #{storageId,jdbcType=TINYINT}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="Sku" >
+    <selectKey resultType="java.lang.Integer" keyProperty="skuId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_sku
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bgSkuId != null" >
+        bg_sku_id,
+      </if>
+      <if test="collegeId != null" >
+        college_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="originPrice != null" >
+        origin_price,
+      </if>
+      <if test="appPrice != null" >
+        app_price,
+      </if>
+      <if test="wapPrice != null" >
+        wap_price,
+      </if>
+      <if test="stock != null" >
+        stock,
+      </if>
+      <if test="skuType != null" >
+        sku_type,
+      </if>
+      <if test="skuStatus != null" >
+        sku_status,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="distributeType != null" >
+        distribute_type,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="storageId != null" >
+        storage_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bgSkuId != null" >
+        #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="originPrice != null" >
+        #{originPrice,jdbcType=INTEGER},
+      </if>
+      <if test="appPrice != null" >
+        #{appPrice,jdbcType=INTEGER},
+      </if>
+      <if test="wapPrice != null" >
+        #{wapPrice,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="skuType != null" >
+        #{skuType,jdbcType=TINYINT},
+      </if>
+      <if test="skuStatus != null" >
+        #{skuStatus,jdbcType=TINYINT},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="distributeType != null" >
+        #{distributeType,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="storageId != null" >
+        #{storageId,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="Sku" >
+    update tb_sku
+    <set >
+      <if test="bgSkuId != null" >
+        bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="collegeId != null" >
+        college_id = #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="originPrice != null" >
+        origin_price = #{originPrice,jdbcType=INTEGER},
+      </if>
+      <if test="appPrice != null" >
+        app_price = #{appPrice,jdbcType=INTEGER},
+      </if>
+      <if test="wapPrice != null" >
+        wap_price = #{wapPrice,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="skuType != null" >
+        sku_type = #{skuType,jdbcType=TINYINT},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="distributeType != null" >
+        distribute_type = #{distributeType,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="storageId != null" >
+        storage_id = #{storageId,jdbcType=TINYINT},
+      </if>
+    </set>
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Sku" >
+    update tb_sku
+    set bg_sku_id = #{bgSkuId,jdbcType=INTEGER},
+      college_id = #{collegeId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      origin_price = #{originPrice,jdbcType=INTEGER},
+      app_price = #{appPrice,jdbcType=INTEGER},
+      wap_price = #{wapPrice,jdbcType=INTEGER},
+      stock = #{stock,jdbcType=INTEGER},
+      sku_type = #{skuType,jdbcType=TINYINT},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      distribute_type = #{distributeType,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT},
+      storage_id = #{storageId,jdbcType=TINYINT},
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updatePrice" parameterType="java.util.Map" >
+    update tb_sku
+    set origin_price = #{originPrice,jdbcType=INTEGER},
+      app_price = #{appPrice,jdbcType=INTEGER},
+      wap_price = #{wapPrice,jdbcType=INTEGER}
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+  
+    <update id="batchUpdatePrice" parameterType="java.util.Map" >
+    update tb_sku
+    set origin_price = #{originPrice,jdbcType=INTEGER},
+      app_price = #{appPrice,jdbcType=INTEGER},
+      wap_price = #{wapPrice,jdbcType=INTEGER}
+    where bg_sku_id = #{bgSkuId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 修改仓下的商品状态（已check） -->
+  <update id="updateStock" parameterType="java.util.Map" >
+    update tb_sku
+    set 
+    <if test="stock != -1">
+   	 	stock = #{stock,jdbcType=INTEGER},
+    </if>
+    	sku_status = #{status,jdbcType=INTEGER}
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 修改学校下的sku状态（已check） -->
+  <update id="updateStockByGoodsId" parameterType="java.util.Map" >
+    update tb_sku
+    set stock = #{stock,jdbcType=INTEGER},
+    	sku_status = #{status,jdbcType=INTEGER}
+    where goods_id = #{goodsId,jdbcType=INTEGER} and distribute_type = #{isLdc,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateRdcStatusByBgGoodsIdCollegeId" parameterType="java.util.Map" >
+    UPDATE tb_goods g LEFT JOIN tb_sku s
+    ON g.bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} AND g.college_id = #{collegeId,jdbcType=INTEGER} AND g.is_del = 0 AND g.`goods_id` = s.goods_id
+    SET s.`sku_status` = #{status,jdbcType=INTEGER}
+    WHERE s.`distribute_type` = 0 AND s.`is_del` = 0
+  </update>
+  
+  <update id="updateLdcStatusByBgGoodsIdCollegeId" parameterType="java.util.Map" >
+    UPDATE tb_goods g LEFT JOIN tb_sku s
+    ON g.bg_goods_id = #{bgGoodsId,jdbcType=INTEGER} AND g.college_id = #{collegeId,jdbcType=INTEGER} AND g.is_del = 0 AND g.`goods_id` = s.goods_id
+    SET s.`sku_status` = #{status,jdbcType=INTEGER}
+    WHERE s.`distribute_type` = 1 AND s.`is_del` = 0
+  </update>
+  
+  <update id="deleteByCollegeIdIsLdc" parameterType="hashmap" >
+    UPDATE tb_goods g,tb_sku s
+	SET s.`is_del` = 1
+	WHERE g.`goods_id` = s.`goods_id` 
+	<if test="bgGoodsId != -1">
+		AND g.`bg_goods_id` = #{bgGoodsId,jdbcType=INTEGER}
+	</if>
+	<if test="collegeId != -1">
+		AND g.`college_id` = #{collegeId,jdbcType=INTEGER}
+	</if>
+	<if test="bgSkuId != -1">
+		AND s.`bg_sku_id` = #{bgSkuId,jdbcType=INTEGER}
+	</if>
+	<if test="isLdc != -1">
+		 AND s.`distribute_type` = #{isLdc,jdbcType=INTEGER}
+	</if>
+  </update>
+  
+</mapper>

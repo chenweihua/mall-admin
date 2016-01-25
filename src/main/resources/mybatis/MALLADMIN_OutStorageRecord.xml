@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Fri Sep 06 13:48:14 
+	CST 2013 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OutStorageRecord">
+
+	<resultMap id="outStorageRecordMap" type="outStorageRecord">
+		<result column="record_id" property="recordId" jdbcType="INTEGER" />
+		<result column="order_code" property="orderCode" />
+		<result column="courier_name" property="courierName" />
+		<result column="courier_phone" property="courierPhone" />
+		<result column="create_time" property="createTime"  />
+	</resultMap>
+
+	
+	<insert id="addRecord" parameterType="outStorageRecord" >
+  		insert into tb_out_storage_record (order_code,courier_name,courier_phone,create_time) values (#{orderCode},#{courierName},#{courierPhone},now());
+	</insert>
+
+</mapper>

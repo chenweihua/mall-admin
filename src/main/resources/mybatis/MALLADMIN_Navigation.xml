@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Navigation" >
+
+  <resultMap id="NavigationResultMap" type="Navigation" >
+    
+    <id column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="navigation_name" jdbcType="VARCHAR" property="navigationName" />
+	<result column="navigation_desc" jdbcType="VARCHAR" property="navigationDesc" />
+	<result column="navigation_url" jdbcType="VARCHAR" property="navigationUrl" />
+	<result column="inside_url" jdbcType="VARCHAR" property="insideUrl" />
+	<result column="weight" jdbcType="INTEGER" property="weight" />
+	<result column="status" jdbcType="TINYINT" property="status" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="navigation_type" jdbcType="TINYINT" property="navigationType" />
+    <result column="creator" jdbcType="BIGINT" property="creator" />
+    <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="is_show" jdbcType="TINYINT" property="isShow" />
+    <result column="is_del" jdbcType="TINYINT" property="isDel" />
+  </resultMap>
+  
+  
+   <resultMap id="navigationCollegeResultMap" type="NavigationCollege" >
+    
+    <id column="navigation_college_id" jdbcType="BIGINT" property="navigationCollegeId" />
+	<result column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="college_id" jdbcType="BIGINT" property="collegeId" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		navigation_id,
+		navigation_name,
+		navigation_desc,
+		navigation_url,
+		inside_url,
+		weight,
+		status,
+		create_time,
+		update_time,
+		navigation_type,
+		creator,
+		operator,
+		is_show,
+		is_del
+  </sql>
+  
+  <select id="selectNavigationByPrimaryKey" parameterType="java.lang.Long" resultMap="NavigationResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation
+    where navigation_id = #{navigationId,jdbcType=BIGINT} and is_del='0'
+  </select>
+  
+  <select id="selectNavigation" parameterType="Navigation" resultMap="NavigationResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation
+    where is_del='0' 
+		<if test="navigationId != null">
+			and navigation_id = #{navigationId,jdbcType=BIGINT} 
+		</if>
+		
+		<if test="navigationName != null">
+			and navigation_name = #{navigationName,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="navigationDesc != null">
+			and navigation_desc = #{navigationDesc,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="navigationUrl != null">
+			and navigation_url = #{navigationUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="insideUrl != null">
+			and inside_url = #{insideUrl,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="weight != null">
+			and weight = #{weight,jdbcType=INTEGER} 
+		</if>
+		
+		<if test="status != null">
+			and status = #{status,jdbcType=TINYINT} 
+		</if>
+		
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP} 
+		</if>
+		
+		<if test="updateTime != null">
+			and update_time = #{updateTime,jdbcType=TIMESTAMP} 
+		</if>
+		<if test="isShow != null">
+			and is_show = #{isShow,jdbcType=TINYINT} 
+		</if>
+		order by navigation_id desc
+  </select>
+  
+  <!-- 删除导航 -->
+  <update id="deleteNavigationByPrimaryKey" parameterType="java.lang.Long">
+    update tb_navigation set is_del='1'
+    where navigation_id = #{navigationId,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 导航导航的开启和关闭状态 -->
+    <update id="setNavigationStatus" parameterType="java.util.Map">
+    update tb_navigation set status=#{status,jdbcType=TINYINT}
+    where navigation_id = #{navigationId,jdbcType=BIGINT} and is_del='0'
+  </update>
+  
+  <insert id="insertNavigation" parameterType="Navigation">
+    insert into tb_navigation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="navigationId != null">
+        navigation_id,
+      </if>
+      <if test="navigationName != null">
+        navigation_name,
+      </if>
+      <if test="navigationDesc != null">
+        navigation_desc,
+      </if>
+      <if test="navigationUrl != null">
+        navigation_url,
+      </if>
+      <if test="insideUrl != null">
+        inside_url,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+        create_time,
+        update_time,
+      <if test="navigationType != null">
+        navigation_type,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+      <if test="isShow != null">
+        is_show,
+      </if>
+        is_del,
+    </trim>
+                
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="navigationId != null">
+        #{navigationId,jdbcType=BIGINT},
+      </if>
+      <if test="navigationName != null">
+        #{navigationName,jdbcType=VARCHAR},
+      </if>
+      <if test="navigationDesc != null">
+        #{navigationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="navigationUrl != null">
+        #{navigationUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="insideUrl != null">
+        #{insideUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      now(),now(),
+      <if test="navigationType != null">
+        #{navigationType,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=BIGINT},
+      </if>     
+      <if test="isShow != null">
+        #{isShow,jdbcType=TINYINT},
+      </if>  
+		0,                        
+    </trim>
+  </insert>
+  
+  <update id="updateNavigationByPrimaryKey" parameterType="Navigation">
+    
+    update tb_navigation
+    <set>
+			<if test="navigationName != null">
+				navigation_name = #{navigationName,jdbcType=VARCHAR},
+			</if>
+			<if test="navigationDesc != null">
+				navigation_desc = #{navigationDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="navigationUrl != null">
+				navigation_url = #{navigationUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="insideUrl != null">
+				inside_url = #{insideUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=TINYINT},
+			</if>
+				update_time =now(),
+		      <if test="operator != null">
+		        operator = #{operator,jdbcType=BIGINT},
+		      </if>
+			  <if test="isShow != null">
+		        is_show = #{isShow,jdbcType=BIGINT},
+		      </if>        
+    </set>
+    where navigation_id = #{navigationId,jdbcType=BIGINT} and is_del='0'
+  </update>
+  
+  <select id="getPageNavigationByPage" resultMap="NavigationResultMap">
+		select * from tb_navigation
+		where is_del='0'
+		<if test="navigationName != null">
+				and navigation_name like CONCAT('%',#{navigationName,jdbcType=VARCHAR},'%' )
+		</if>
+		<if test="status != null and status != '' ">
+				and status = #{status,jdbcType=TINYINT}
+		</if>
+		 order by update_time desc
+	</select>
+	
+  <select id="getNavigationList" resultMap="NavigationResultMap">
+		select * from tb_navigation
+		where is_del = 0
+		order by navigation_id desc
+	</select>
+ 
+  <select id="getNavigationCollegeByNavigationId" resultMap="navigationCollegeResultMap">
+  		select * from tb_navigation_college where navigation_id = #{navigationId,jdbcType=BIGINT}
+  </select>
+  
+  <insert id="insertNavigationColleges" parameterType="java.util.Map">
+  	insert into tb_navigation_college(navigation_college_id,navigation_id,college_id,create_time) values
+  	<foreach item="navigationCollege" collection="navigationColleges" open="" separator="," close=""> 
+          (#{navigationCollege.navigationCollegeId},#{navigationCollege.navigationId},#{navigationCollege.collegeId},now())
+    </foreach> 
+  
+  </insert>
+  
+  <delete id="delNavigationCollegeByNavigationId" parameterType="java.lang.Long">
+    delete from tb_navigation_college
+    where navigation_id = #{navigationd,jdbcType=BIGINT}
+  </delete>
+  
+</mapper>

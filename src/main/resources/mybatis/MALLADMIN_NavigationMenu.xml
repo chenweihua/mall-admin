@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="NavigationMenu" >
+
+  <resultMap id="NavigationMenuResultMap" type="NavigationMenu" >
+    <id column="nav_menu_id" jdbcType="BIGINT" property="navMenuId" />
+	<result column="nav_menu_id" jdbcType="BIGINT" property="navMenuId" />
+	<result column="navigation_id" jdbcType="BIGINT" property="navigationId" />
+	<result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+	<result column="weight" jdbcType="INTEGER" property="weight" />
+	<result column="menu_type" jdbcType="TINYINT" property="menuType" />
+	<result column="parent_id" jdbcType="INTEGER" property="pid" />
+	<result column="level" jdbcType="TINYINT" property="level" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="creator" jdbcType="BIGINT" property="creator" />
+    <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="is_del" jdbcType="TINYINT" property="isDel" />
+    <result column="is_show" jdbcType="TINYINT" property="isShow" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+		nav_menu_id,
+		navigation_id,
+		menu_name,
+		weight,
+		menu_type,
+		parent_id,
+		level,
+		create_time,
+		update_time,
+		creator,
+		operator,
+		is_del,
+		is_show
+  </sql>
+  
+   <select id="selectAllNavMenuList" parameterType="java.lang.Long" resultMap="NavigationMenuResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_menu
+    where `is_del`='0' order by weight desc;
+  </select>
+  
+  <select id="selectNavMenuListByNavId" parameterType="java.lang.Long" resultMap="NavigationMenuResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_menu
+    where navigation_id = #{navigationId,jdbcType=BIGINT} and `is_del`='0' order by weight desc;
+  </select>
+  
+  <insert id="insertNavigationMenu" parameterType="NavigationMenu">
+    insert into tb_navigation_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="navigationId != null">
+        navigation_id,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="menuType != null">
+        menu_type,
+      </if>
+      <if test="pid != null">
+        parent_id,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+        create_time,
+        update_time,
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+     	is_del,
+      <if test="isShow != null">
+        is_show,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="navigationId != null">
+		  	#{navigationId,jdbcType=BIGINT},
+      	</if>
+		<if test="menuName != null">
+			#{menuName,jdbcType=VARCHAR},
+		</if>
+		<if test="weight != null">
+			#{weight,jdbcType=INTEGER},
+		</if>
+		<if test="menuType != null">
+			#{menuType,jdbcType=TINYINT},
+		</if>
+		<if test="pid != null">
+			#{pid,jdbcType=TINYINT},
+		</if>
+		<if test="level != null">
+			#{level,jdbcType=TINYINT},
+		</if>		
+			now(),
+			now(),
+		<if test="creator != null">
+			#{creator,jdbcType=BIGINT},
+		</if>
+		<if test="operator != null">
+			#{operator,jdbcType=BIGINT},
+		</if>   
+     		0,   
+      <if test="isShow != null">
+        #{isShow,jdbcType=TINYINT},
+      </if>     		
+    </trim>
+  </insert>
+  
+  <update id="updateNavigationMenu" parameterType="NavigationMenu">
+    update tb_navigation_menu
+    <set>
+			<if test="menuName != null">
+				menu_name = #{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=INTEGER},
+			</if>
+				update_time =now(),
+		      <if test="operator != null">
+		        operator = #{operator,jdbcType=BIGINT},
+		      </if>
+		      <if test="isShow != null">
+		        is_show = #{isShow,jdbcType=BIGINT},
+		      </if>
+    </set>
+    where nav_menu_id = #{navMenuId,jdbcType=BIGINT}
+  </update>
+  
+  <update id="delNavigationMenuById" parameterType="java.lang.Long">
+    update tb_navigation_menu set is_del='1'
+    where nav_menu_id = #{navMenuId,jdbcType=BIGINT}
+  </update>
+  <!-- 根据父节点删除该父结点下的菜单 -->
+  <update id="delNavigationMenuByPId" parameterType="java.lang.Long">
+  	update tb_navigation_menu set is_del='1'
+  	where parent_id=#{pid,jdbcType=BIGINT}
+  </update>
+  
+   <!-- 根据父节点删除该父结点下的菜单 -->
+  <update id="setNavigationShowStatus" parameterType="map">
+  	update tb_navigation_menu set is_show=#{isShow}
+  	where nav_menu_id=#{navMenuId,jdbcType=BIGINT}
+  </update>
+  <!-- 查询根节点菜单 根据menuType获得活动的菜单或商品的根菜单 -->
+  <select id="selectRootMenu" parameterType="java.lang.Long" resultMap="NavigationMenuResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_menu
+    where parent_id='0' 
+    <if test="menuType!=null">
+    and menu_type=#{menuType}
+    </if>
+     order by weight desc;
+  </select>
+  
+  <!-- 根据根节点查询对应的子菜单 -->
+  <select id="selectChildMenuByPid" parameterType="map" resultMap="NavigationMenuResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_menu
+    where parent_id=#{parentId}  order by weight desc;
+  </select>
+  
+  
+  <select id="queryNavigationMenuByNavMenuId" parameterType="java.lang.Long" resultMap="NavigationMenuResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_navigation_menu
+    where nav_menu_id = #{navMenuId,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 批量更新某个菜单项的所有子菜单的显示状态 -->
+  <update id="setNavigationMenuShowStatusByPid" parameterType="map">
+  	update tb_navigation_menu set is_show=#{isShow}
+  	where parent_id=#{pid,jdbcType=BIGINT}
+  </update>
+  
+</mapper>
